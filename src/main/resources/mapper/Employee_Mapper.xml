@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.EmployeeDaoImpl">
+	<insert id="saveSignature">
+		INSERT INTO EMP_IMAGES (SIGNATURE_ID,EMPNO,FILE_BASE,GUBUN)
+		VALUES((SELECT NVL(MAX(SIGNATURE_ID),'0')+1 FROM
+		EMP_IMAGES), #{empno} , #{img},'1')
+	</insert>
+	
+	<update id="updateSignature">
+		UPDATE EMP_IMAGES
+		SET USE_YN = 'N'
+		WHERE EMPNO = #{empno} AND GUBUN = '1' AND USE_YN = 'Y'
+	</update>
+	
+	<resultMap type="java.util.Map" id="clob">
+	<result property="EMPNO" column="EMPNO" javaType="java.lang.String"/>
+		<result property="FILE_BASE" column="FILE_BASE" javaType="java.lang.String"/>
+	</resultMap>
+	
+	<select id="readSignature" resultMap="clob">
+		SELECT EMPNO, FILE_BASE FROM EMP_IMAGES
+		WHERE EMPNO = #{empno} AND GUBUN = '1' AND USE_YN = 'Y'
+	</select>
+	
+	
+	
+</mapper>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.CalendarDaoImpl">
+    <!-- 캘린더 저장 -->
+<insert id="scheduleSave" parameterType="map">
+INSERT INTO SCHEDULE (
+    SCH_ID,
+    EMPNO,
+    SCH_TITLE,
+    SCH_STARTDATE,
+    SCH_ENDDATE,
+    SCH_COLOR,
+    SCH_CONTENT,
+    CREATE_EMPNO,
+    CREATE_DATE
+) VALUES (
+    SCH_ID_SEQ.NEXTVAL,
+     #{empno},
+     #{sch_title},
+     #{sch_startdate},
+     #{sch_enddate},
+     #{sch_color},
+     #{sch_content},
+     #{empno},
+     CURRENT_DATE
+)
+</insert>
+
+<select id="loadSchedule" parameterType="map" resultType="map">
+    SELECT 
+        SCH_TITLE AS sch_title,
+        SCH_STARTDATE AS sch_startdate,
+        SCH_ENDDATE AS sch_enddate,
+        SCH_COLOR AS sch_color
+    FROM SCHEDULE
+</select>
+
+    <!-- 개인 일정 조회 -->
+    <select id="loadEmpSchedule" parameterType="string" resultType="map">
+SELECT
+    s.EMPNO,
+    e.NAME,
+    SCH_ID,
+    SCH_TITLE,
+    SCH_STARTDATE,
+    SCH_ENDDATE,
+    SCH_COLOR,
+    SCH_CONTENT
+FROM
+    SCHEDULE s  
+JOIN
+    EMPLOYEES e ON s.EMPNO = e.EMPNO 
+WHERE 
+	s.EMPNO = #{empno} AND s.USE_YN ='Y'
+    </select>
+
+    <!-- 부서 일정 조회 -->
+    <select id="loadDeptSchedule" parameterType="string" resultType="map">
+SELECT
+    s.EMPNO,
+    e.NAME,
+    SCH_ID,
+    SCH_TITLE,
+    SCH_STARTDATE,
+    SCH_ENDDATE,
+    SCH_COLOR,
+    SCH_CONTENT
+FROM
+    SCHEDULE s  
+JOIN
+    EMPLOYEES e ON s.EMPNO = e.EMPNO 
+WHERE
+     DEPTNO = #{deptno} s.USE_YN ='Y'
+    </select>
+
+    <!-- 전체 일정 조회 -->
+    <select id="loadAllSchedule" resultType="map">
+SELECT
+    s.EMPNO,
+    e.NAME,
+    SCH_ID,
+    SCH_TITLE,
+    SCH_STARTDATE,
+    SCH_ENDDATE,
+    SCH_COLOR,
+    SCH_CONTENT
+FROM
+    SCHEDULE s  
+JOIN
+    EMPLOYEES e ON s.EMPNO = e.EMPNO 
+WHERE
+	s.USE_YN ='Y'
+    </select>
+    
+    
+    <!-- 일정삭제 -->
+    <update id="deleteSchedule" parameterType="map">
+    	UPDATE SCHEDULE
+		SET UPDATE_EMPNO=#{empno}, UPDATE_DATE=CURRENT_DATE, USE_YN='N' 
+		WHERE SCH_ID=#{sch_id}
+	</update>
+	
+	
+    <!-- 캘린더 수정 -->
+    <update id="updateSchedule" parameterType="map">
+    	UPDATE SCHEDULE
+		SET SCH_TITLE=#{sch_title}, SCH_STARTDATE=#{sch_startdate}, SCH_ENDDATE=#{sch_enddate}, SCH_COLOR=#{sch_color}, SCH_CONTENT=#{sch_content},
+		UPDATE_EMPNO=#{empno}, UPDATE_DATE=CURRENT_DATE, USE_YN='Y' 
+		WHERE SCH_ID=#{sch_id}
+	</update>
+
+</mapper>

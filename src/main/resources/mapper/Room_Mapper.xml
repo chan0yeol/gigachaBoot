@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.RoomDaoImpl">
+ 	<!-- 회의실 등록 -->
+	<insert id="insertRoom" parameterType="RoomDto">
+<!-- 	INSERT INTO ROOMS (ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, -->
+<!-- 		CLOSE_HOURS, CREATED_AT, UPDATED_AT, USE_YN, IMAGE_URL) -->
+<!-- 	VALUES ('ROOM' || LPAD(SEQ_ROOM_ID.NEXTVAL,3,'0'), #{room_name}, 7, '09:00', -->
+<!-- 		'18:00', TO_DATE(CREATED_AT, 'YYYY-MM-DD'), TO_DATE(UPDATED_AT, 'YYYY-MM-DD'),'Y', #{image_url}) -->
+	INSERT INTO ROOMS (ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS,
+		CLOSE_HOURS, CREATED_AT, USE_YN, IMAGE_URL)
+	VALUES ('ROOM' || LPAD(SEQ_ROOM_ID.NEXTVAL,3,'0'), #{room_name}, 7, '09:00',
+		'18:00', TO_DATE(CURRENT_DATE, 'YYYY-MM-DD'), 'Y', #{image_url})
+	</insert>
+	
+	<!-- 전체 회의실 조회 -->
+	<select id="selectAllRooms" resultType="RoomDto">
+	SELECT ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, CLOSE_HOURS, 
+           TO_CHAR(CREATED_AT,'YYYY-MM-DD') AS CREATED_AT, TO_CHAR(UPDATED_AT,'YYYY-MM-DD') AS UPDATED_AT, USE_YN, IMAGE_URL
+    FROM ROOMS
+    ORDER BY ROOM_ID
+	</select>
+	<select id="selectUseAllRooms" resultType="RoomDto">
+	SELECT ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, CLOSE_HOURS, 
+           TO_CHAR(CREATED_AT,'YYYY-MM-DD') AS CREATED_AT, TO_CHAR(UPDATED_AT,'YYYY-MM-DD') AS UPDATED_AT, USE_YN, IMAGE_URL
+    FROM ROOMS WHERE USE_YN = 'Y'
+    ORDER BY ROOM_ID
+	</select>
+	<!-- 특정 회의실 조회 -->
+    <select id="selectRoomById" parameterType="map" resultType="RoomDto">
+	SELECT ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, CLOSE_HOURS,
+			CREATED_AT, UPDATED_AT, USE_YN, IMAGE_URL
+	FROM ROOMS WHERE room_id = #{room_id}
+    </select>
+    
+	<!-- 회의실 정보 수정 -->
+	<update id="updateRoom">
+    UPDATE ROOMS
+    <set>
+        <if test="room_name != null and room_name != ''">
+            ROOM_NAME = #{room_name},
+        </if>
+        <if test="capacity != null and capacity != ''">
+            CAPACITY = #{capacity},
+        </if>
+        <if test="use_yn != null and use_yn != ''">
+            USE_YN = #{use_yn},
+        </if>
+        UPDATED_AT = TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
+    </set>
+    WHERE ROOM_ID = #{room_id}
+</update>
+	
+
+</mapper>

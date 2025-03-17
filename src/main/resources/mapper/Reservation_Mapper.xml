@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.ReservationDaoImpl">
+	<!-- 예약 생성 -->
+	<insert id="insertreservation" parameterType="ReservationDto">
+	<selectKey keyProperty="room_id" resultType="String" order="BEFORE">
+	    SELECT 
+	    	ROOM_ID 
+	    FROM ROOMS
+	    WHERE ROOM_NAME = #{room_name}
+    </selectKey>
+	INSERT INTO RESERVATION 
+				(RESERVATION_ID, 
+				 ROOM_ID, ROOM_NAME,
+			     RESERVATION_DATE,
+				 RESERVATION_TIME, 
+				 RESERVER, 
+				 CAPACITY, 
+				 MEMBER, 
+				PURPOSE)
+	VALUES
+		(SEQ_RESERVATION_ID.NEXTVAL, #{room_id}, #{room_name}, #{reservation_date},
+		 		#{reservation_time}, #{reserver},#{capacity}, #{member}, #{purpose})
+	</insert>
+
+	<!-- 예약 전체 조회 -->
+	<select id="selectReservationByRoomId" resultType="ReservationDto">
+	SELECT
+    r2.RESERVATION_ID,
+    r2.ROOM_ID ,
+    r.ROOM_NAME,
+    r2.RESERVATION_DATE,
+    r2.RESERVATION_TIME,
+    r2.RESERVER,
+    r2.MEMBER,
+    r2.PURPOSE,
+    r2.CAPACITY  
+FROM
+    RESERVATION r2
+JOIN
+    ROOMS r ON r2.ROOM_ID = r.ROOM_ID 
+  WHERE
+    r2.ROOM_ID = #{room_id}	
+	</select>
+
+	<!-- 예약자와 참여자 조회 -->
+	<select id="selectReserverAndMember" resultType="reservationDto">
+	SELECT
+		e.NAME AS RESERVER,
+		r.MEMBER
+	FROM
+		RESERVATION_PARTICIPANT rp
+	JOIN
+		RESERVATION r ON rp.RESERVATION_ID = r.RESERVATION_ID
+	LEFT JOIN
+		EMPLOYEES e ON rp.EMPNO = e.EMPNO 
+	WHERE
+		r.RESERVATION_ID = #{reservation_id}
+	</select>
+	
+	<!-- 예약삭제 (예약자 본인 예약내역만 삭제) -->
+	<delete id="delReservation">
+		DELETE FROM RESERVATION WHERE RESERVATION_ID =
+		#{reservation_id}
+		AND RESERVER = #{reserver}
+	</delete>
+	
+<select id="selectrooms" resultType="reservationDto">
+    SELECT r2.RESERVATION_ID,
+           r.ROOM_ID,
+           TO_CHAR(r2.RESERVATION_DATE, 'YYYY-MM-DD') AS RESERVATION_DATE,
+           r2.RESERVATION_TIME,
+           r2.RESERVER,
+           r2."MEMBER",
+           r2.PURPOSE
+    FROM RESERVATION r2
+    JOIN ROOMS r ON r2.ROOM_ID = r.ROOM_ID
+    WHERE r2.RESERVATION_DATE = 
+        TO_DATE(
+            <if test="date != null">
+                #{date}
+            </if>
+            <if test="date == null">
+                TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
+            </if>, 
+        'YYYY-MM-DD') AND r.USE_YN = 'Y'
+    ORDER BY r2.RESERVATION_DATE, r2.RESERVATION_TIME
+</select>
+	
+<select id="reservationList" resultType="reservationDto">
+SELECT
+	ROOM_ID,
+	ROOM_NAME,
+	RESERVATION_DATE,
+	RESERVATION_ID,
+	RESERVATION_TIME,
+	PURPOSE
+FROM
+	RESERVATION r
+WHERE
+	 INSTR(MEMBER , '2501009') > 0 OR  RESERVER = '1505001'
+</select>
+
+
+</mapper>

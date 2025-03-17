@@ -1,0 +1,82 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <button class="btn btn-info" id="acceptBtn" value="{{approval_id}}">승인</button>
+        <button class="btn btn-success" id="rejectBtn" value="{{approval_id}}">반려</button>
+        <button type="button" class="btn-close modalBtn" data-bs-dismiss="modal"></button>
+    </div>
+
+    <div class="modal-body row">
+        <div class="col-8">
+            <table border="1" class="table">
+                <tbody>
+                    <tr>
+                        <th>문서번호</th>
+                        <td id="approval_id">{{approval_id}}</td>
+                        <th>기안일자</th>
+                        <td>{{create_date}}</td>
+                    </tr>
+                    <tr>
+                        <th>기안자</th>
+                        <td>{{empno}}</td>
+                        <th>부서</th>
+                        <td>{{deptno}}</td>
+                    </tr>
+                    <tr>
+                        <th>참조자</th>
+                        <td><span>참조자선택버튼</span></td>
+                        <th>마감기한</th>
+                        <td>{{approval_deadline}}</td>
+                    </tr>
+                    {{#if showDateRange}}
+                    <tr>
+                        <th>시작날짜</th>
+                        <td>{{start_date}}</td>
+                        <th>종료날짜</th>
+                        <td>{{end_date}}</td>
+                    </tr>
+                    {{/if}}
+                    <tr>
+                        <th>문서제목</th>
+                        <td colspan="3">{{approval_title}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="approvalLine" class="mt-3 col-4">
+            <h4>결재 라인</h4>
+            {{#each approvalLineDtos}}
+            <div class="approval-item">
+                <div class="text-center">{{approver_empno}}</div>
+				{{#if signature}}
+                	<img src="{{signature}}" width="50" height="50">
+          	 	 {{else}}
+            	    {{#if (eq status_id "ST04")}}
+                    <img src="https://cdn3.iconfinder.com/data/icons/miscellaneous-80/60/check-512.png" width="50" height="50">
+              		  {{else if (eq status_id "ST05")}}
+               		     <img src="https://cdn3.iconfinder.com/data/icons/flat-actions-icons-9/792/Close_Icon_Circle-512.png" width="50" height="50">
+             	   {{/if}}
+            	{{/if}}
+
+            </div>
+            {{/each}}
+        </div>
+    </div>
+
+    <div id="fileDiv">
+        <h4>첨부 파일</h4>
+        <ul id="fileUl">
+            {{#each fileData}}
+            <li>
+                {{origin_name}}
+                <button class="btn btn-sm btn-success download-btn"  value="{{file_id}}" onclick="download(this)"">다운로드</button>
+            </li>
+            {{/each}}
+        </ul>
+    </div>
+
+    <div id="modal-content">
+        {{{approval_content}}} <!-- HTML 포함 출력 -->
+    </div>
+
+    <button type="button" class="btn btn-danger modalBtn" data-bs-dismiss="modal">닫기</button>
+</div>

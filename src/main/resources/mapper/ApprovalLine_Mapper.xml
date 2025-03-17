@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.IApprovalLineDao">
+	<insert id="insertApprovalLines" parameterType="map">
+		INSERT INTO APPROVAL_LINE(LINE_ID, APPROVAL_ID, "SEQUENCE", STATUS_ID,
+		APPROVER_EMPNO)
+		SELECT APPROVALLINE_SEQ.NEXTVAL, A.* FROM (
+		<choose>
+			<when test="approvalLineDtos != null and approvalLineDtos.size() > 0">
+				<foreach collection="approvalLineDtos" item="item" index="i" separator=" UNION ALL ">
+					SELECT #{item.approval_id} , #{i} , 'ST02' , #{item.approver_empno, jdbcType=NUMERIC}
+					FROM DUAL
+				</foreach>
+			</when>
+			<otherwise>
+				SELECT #{approval_id} , '1' ,'ST02' , #{approver_empno}
+				FROM DUAL
+			</otherwise>
+		</choose>
+		) A
+	</insert>
+	
+	<insert id="insertApprovalLine">
+		INSERT INTO APPROVAL_LINE(LINE_ID, APPROVAL_ID, "SEQUENCE", STATUS_ID,
+		APPROVER_EMPNO)
+		SELECT APPROVALLINE_SEQ.NEXTVAL, A.* FROM (
+				SELECT #{approval_id} , '1' ,'ST02' , #{approver_empno} FROM DUAL
+		) A
+	</insert>
+	<!-- 결재승인 -->
+	<update id="acceptApprovalLine">
+		UPDATE APPROVAL_LINE 
+		SET STATUS_ID = 'ST04', APPROVAL_TIME = CURRENT_DATE, SIGNATURE = (SELECT FILE_BASE FROM EMP_IMAGES
+																			WHERE EMPNO = #{empno} AND GUBUN = '1' AND USE_YN = 'Y' )
+		WHERE APPROVAL_ID = (SELECT APPROVAL_ID FROM APPROVAL a 
+				WHERE a.APPROVAL_ID = #{approval_id} 
+				AND APPROVAL_STATUS IN ('ST02', 'ST03'))
+		AND APPROVER_EMPNO = #{empno}
+	</update>
+	
+	<update id="rejectApprovalLine">
+		UPDATE APPROVAL_LINE 
+		SET STATUS_ID = 'ST05', APPROVAL_TIME = CURRENT_DATE
+		<if test="reject_reason != null">
+		,REJECT_REASON = #{reject_reason}
+		</if>
+		WHERE APPROVAL_ID = (SELECT APPROVAL_ID FROM APPROVAL a 
+				WHERE a.APPROVAL_ID = #{approval_id} 
+				AND APPROVAL_STATUS IN ('ST02', 'ST03'))
+		AND APPROVER_EMPNO = #{empno}
+	</update>
+	
+	<select id="countApprovalLine" resultType="Integer">
+		SELECT COUNT(*) 
+			FROM APPROVAL_LINE 
+			WHERE APPROVAL_ID = #{approval_id}
+			<if test="status_id != null">
+				<choose>
+					<when test="status_id == 'ST04'">
+						AND STATUS_id = 'ST04'
+					</when>
+					<when test="status_id == 'ST05'">
+						AND STATUS_id = 'ST05'
+					</when>
+				</choose>
+			</if>
+	</select>
+	
+	<delete id="deleteApprovalLine">
+		DELETE FROM APPROVAL_LINE
+		WHERE APPROVAL_ID = #{approval_id}
+	</delete>
+	
+	<select id="countStatusApprovalLine" resultType="Integer">
+		SELECT COUNT(*) 
+			FROM APPROVAL_LINE 
+			WHERE APPROVAL_ID = #{approval_id}
+			<if test="status_id != null">
+				<choose>
+					<when test="status_id == 'ST04'">
+						AND STATUS_ID = 'ST04'
+					</when>
+					<when test="status_id == 'ST05'">
+						AND STATUS_ID = 'ST05'
+					</when>
+				</choose>
+			</if>
+	</select>
+	
+	<insert id="insertSaveLine">
+	INSERT INTO SAVE_LINE (SAVE_LINE_ID, EMPNO, LINE_NAME, LINE_DATA)
+	VALUES (SAVELINE_SEQ.NEXTVAL,#{empno},#{line_name},#{line_data})
+	</insert>
+	
+	<select id="selectSaveLine" resultType="map">
+		SELECT LINE_NAME, LINE_DATA
+			FROM SAVE_LINE
+			WHERE EMPNO = #{empno}
+	</select>		
+</mapper>

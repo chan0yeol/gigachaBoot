@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.IApprovalFormDao">
+	<insert id="formInsert" parameterType="approvalFormDto">
+		<selectKey keyProperty="form_id" resultType="String"
+			order="BEFORE">
+			SELECT
+			(SELECT CATEGORY_YNAME FROM APPROVAL_CATEGORY WHERE CATEGORY_ID =
+			#{category_id}) ||
+			LPAD(APPROVALFORM_SEQ.NEXTVAL, 3, '0')
+			FROM DUAL
+		</selectKey>
+		INSERT INTO APPROVAL_FORM (FORM_ID, CATEGORY_ID, FORM_NAME,	FORM_CONTENT)
+		VALUES (#{form_id}, #{category_id}, #{form_name}, #{form_content})
+	</insert>
+
+	<update id="formUpdate" parameterType="approvalFormDto">
+		UPDATE APPROVAL_FORM 
+		SET FORM_NAME = #{form_name}, FORM_CONTENT= #{form_content}
+		WHERE FORM_ID = #{form_id}
+	</update>
+	
+	<update id="formDelete" parameterType="String">
+		UPDATE APPROVAL_FORM 
+			SET USE_YN = 'N'
+			WHERE FORM_ID = #{form_id}
+	</update>
+	
+	<resultMap type="approvalFormDto" id="formJoinCategory">
+		<result property="category_id" column="CATEGORY_ID" />
+		<result property="form_content" column="CATEGORY_NAME" />
+		<result property="form_id" column="FORM_ID" />
+		<result property="form_name" column="FORM_NAME" />
+		<result property="create_date" column="CREATE_DATE" />
+	</resultMap>
+	
+	<select id="formSelectAll" resultMap="formJoinCategory">
+		SELECT CATEGORY_ID, CATEGORY_NAME , FORM_ID, FORM_NAME, t1.CREATE_DATE 
+		FROM APPROVAL_FORM t1 JOIN APPROVAL_CATEGORY t2
+		USING(CATEGORY_ID)
+		WHERE t2.USE_YN = 'Y' AND t1.USE_YN = 'Y'
+	</select>
+	
+	<select id="formSelectDetail" resultType="approvalFormDto">
+		SELECT FORM_ID, CATEGORY_ID, FORM_NAME, FORM_CONTENT, CREATE_DATE
+		FROM APPROVAL_FORM
+		WHERE FORM_ID = #{form_id}
+	</select>
+	
+	
+	 <resultMap type="java.util.Map" id="formSelectId">
+		<result property="FORM_ID" column="FORM_ID" javaType="java.lang.String"/>
+		<result property="FORM_NAME" column="FORM_NAME" javaType="java.lang.String"/>
+		<result property="FORM_CONTENT" column="FORM_CONTENT" javaType="java.lang.String"/>
+   </resultMap>
+	<select id="formSelectById" resultMap="formSelectId">
+		SELECT FORM_ID, FORM_NAME, FORM_CONTENT FROM APPROVAL_FORM
+		WHERE FORM_ID = #{form_id}	
+	</select>
+	
+	
+	
+</mapper>

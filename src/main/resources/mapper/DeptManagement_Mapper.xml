@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.DeptManagementImpl">
+  
+    
+  <!-- 부서 등록
+  <insert id="insertDepartment">
+  <![CDATA[
+	INSERT INTO DEPARTMENTS
+	(DEPTNO, DEPTNAME, PARENT_DEPTNO,
+	USE_YN, CREATE_DATE, CREATE_EMP)
+		VALUES('D' || LPAD(DEPT_SEQ.NEXTVAL, 2, '0'), #{DEPTNAME}, #{PARENT_DEPTNO}, 'Y',
+		TO_DATE(TO_CHAR(SYSDATE, 'YY-MM-DD')), #{create_emp})
+		]]>
+  </insert>
+   -->
+  
+  <!-- 상위 부서 등록 
+  <insert id="insertHQDepartment">
+  <![CDATA[
+	INSERT INTO DEPARTMENTS
+	(DEPTNO, DEPTNAME, USE_YN,
+	CREATE_DATE, CREATE_EMP)
+		VALUES('HQ' || LPAD(DEPT_SEQ.NEXTVAL, 2, '0'), #{DEPTNAME}, 'Y',
+		TO_DATE(TO_CHAR(SYSDATE, 'YY-MM-DD')), #{create_emp})
+		]]>
+  </insert>
+  -->
+  <insert id="insertDepartment" parameterType="map">
+  <![CDATA[
+    INSERT INTO DEPARTMENTS
+    (DEPTNO, DEPTNAME, PARENT_DEPTNO, USE_YN, CREATE_DATE, CREATE_EMP)
+    VALUES(
+        CASE 
+            WHEN #{deptType} = 'HQ' THEN 'HQ' || LPAD(DEPTHQ_SEQ.NEXTVAL, 2, '0')
+            WHEN #{deptType} = 'D' THEN 'D' || LPAD(DEPT_SEQ.NEXTVAL, 2, '0')
+        END,
+      	#{deptname}, #{parent_deptno}, 'Y', 
+        TO_DATE(TO_CHAR(SYSDATE, 'YY-MM-DD')), #{create_emp})
+   ]]>
+</insert>
+
+  <!-- 중복검사 -->
+  <select id="duplicateCheck" resultType="Integer">
+	SELECT COUNT(*)
+		FROM DEPARTMENTS
+		WHERE DEPTNAME=#{deptname}
+  </select>
+  
+  <!-- 상위부서 조회 -->
+  <select id="hqSelect" resultType="DepartmentDto">
+  SELECT DEPTNO, DEPTNAME 
+	FROM DEPARTMENTS
+	WHERE PARENT_DEPTNO IS NULL
+	ORDER BY DEPTNAME
+  </select>
+  
+  <!-- 부서 수정 -->
+  <update id="updateDepartment">
+  	UPDATE DEPARTMENTS
+  	<set>
+  		<if test="deptname != null and deptname != ''">
+  			DEPTNAME = #{deptname}
+  		</if>
+  		<if test="parent_deptno != null and parent_deptno != ''">
+  			PARENT_DEPTNO = #{parent_deptno}
+  		</if>
+  		UPDATE_DATE=TO_DATE(TO_CHAR(SYSDATE, 'YY-MM-DD')), UPDATE_EMP=#{update_emp}
+  	</set>
+		WHERE DEPTNO=#{deptno}
+  </update>
+  
+  <!-- 부서 삭제 -->
+  <update id="deleteDepartment">
+  UPDATE DEPARTMENTS
+	SET USE_YN='N', UPDATE_DATE=TO_DATE(TO_CHAR(SYSDATE, 'YY-MM-DD')), UPDATE_EMP=#{update_emp}
+	WHERE DEPTNO=#{deptno}
+  </update>
+  
+  <!-- 부서 삭제 (사원 상태 업데이트) -->
+  <update id="deleteDepartmentEmployee">
+  	UPDATE EMPLOYEES 
+		SET DEPTNO = NULL
+		WHERE DEPTNO IN (
+		    SELECT DEPTNO 
+		    	FROM DEPARTMENTS d 
+		    	WHERE USE_YN = 'N')
+  </update>
+  
+  <!-- 부서 전체 조회 -->
+  <select id="getAllDept" resultType="map">
+	SELECT d1.DEPTNO AS "id", d1.DEPTNAME AS "text", NVL(d2.DEPTNO,'#') AS "parent"
+	FROM DEPARTMENTS d1 LEFT JOIN DEPARTMENTS d2  
+	ON d1.PARENT_DEPTNO = d2.DEPTNO 
+	START WITH d1.PARENT_DEPTNO IS NULL
+	CONNECT BY PRIOR d1.DEPTNO = d1.PARENT_DEPTNO
+	AND d1.USE_YN = 'Y'
+	ORDER SIBLINGS BY d1.DEPTNO
+  </select>
+  
+  <!-- 부서 상세 조회 -->
+  <select id="getOneDept" resultType="DepartmentDto">
+  SELECT d1.DEPTNO, 
+		d1.DEPTNAME,
+		d2.DEPTNAME AS PARENT_DEPTNAME, 
+		d1.PARENT_DEPTNO,
+		TO_CHAR(d1.CREATE_DATE,'YYYY-MM-DD') CREATE_DATE, 
+		TO_CHAR(d1.UPDATE_DATE,'YYYY-MM-DD') UPDATE_DATE, 
+		e.NAME AS UPDATE_EMP 
+	FROM DEPARTMENTS d1 LEFT JOIN DEPARTMENTS d2 
+	ON d1.PARENT_DEPTNO = d2.DEPTNO
+	LEFT JOIN EMPLOYEES e ON d1.UPDATE_EMP = e.EMPNO
+	WHERE d1.DEPTNO = #{deptno}
+  </select>
+  
+
+  <!-- 부서 검색 -->
+  <select id="getSearchDept" resultType="DepartmentDto">
+  SELECT d1.DEPTNO, d1.DEPTNAME, d2.DEPTNAME AS PARENT_DEPTNAME
+	FROM DEPARTMENTS d1 LEFT JOIN DEPARTMENTS d2 
+	ON d1.PARENT_DEPTNO = d2.DEPTNO 
+	WHERE d1.DEPTNO = 'D01'
+  </select>
+  
+ 
+  
+  <!-- 삭제된 부서 조회 -->
+  <select id="getDeletedDept" resultType="DepartmentDto">
+  	SELECT DEPTNO, DEPTNAME, PARENT_DEPTNO, USE_YN, CREATE_DATE, UPDATE_DATE, CREATE_EMP, UPDATE_EMP
+		FROM DEPARTMENTS
+		WHERE USE_YN = 'N'
+  </select>
+  
+  
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+

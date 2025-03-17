@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<typeAliases>
+		<typeAlias type="com.giga.gw.dto.ApprovalCategoryDto" alias="approvalCategoryDto"/>
+		<typeAlias type="com.giga.gw.dto.ApprovalFormDto" alias="approvalFormDto"/>
+		<typeAlias type="com.giga.gw.dto.ApprovalDto" alias="approvalDto"/>
+		<typeAlias type="com.giga.gw.dto.ApprovalLineDto" alias="approvalLineDto"/>
+		<typeAlias type="com.giga.gw.dto.ReservationDto" alias="reservationDto"/>
+		<typeAlias type="com.giga.gw.dto.RoomDto" alias="roomDto"/>
+		<typeAlias type="com.giga.gw.dto.EmployeeDto" alias="employeeDto"/>
+		<typeAlias type="com.giga.gw.dto.DepartmentDto" alias="departmentDto"/>
+		<typeAlias type="com.giga.gw.dto.FileDto" alias="fileDto"/>
+		
+	</typeAliases>
+	<mappers>
+		<mapper resource="mapper/Employee_Mapper.xml"/>
+		<mapper resource="mapper/Approval_Mapper.xml"/>
+		<mapper resource="mapper/Department_Mapper.xml"/>
+		<mapper resource="mapper/ApprovalCategory_Mapper.xml"/>
+		<mapper resource="mapper/ApprovalForm_Mapper.xml"/>
+		<mapper resource="mapper/Calendar_Mapper.xml"/>
+		<mapper resource="mapper/ApprovalLine_Mapper.xml"/>
+		<mapper resource="mapper/Reservation_Mapper.xml"/>
+		<mapper resource="mapper/Room_Mapper.xml"/>
+		<mapper resource="mapper/Login_Mapper.xml"/>
+		<mapper resource="mapper/DeptManagement_Mapper.xml"/>
+		<mapper resource="mapper/Attendance_Mapper.xml"/>
+		<mapper resource="mapper/File_Mapper.xml"/>
+	</mappers>
+	
+	
+</configuration>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.AttendanceDaoImpl">
+    <!-- 근무 테이블 만들기  -->
+<insert id="createattendacetable">
+	INSERT INTO ATTENDANCERECORD (
+    ATTNO, EMPNO, WORK_DATE, WORKIN_TIME, WORKOUT_TIME, WORK_TIME, WORK_STATUS, USE_YN
+)
+SELECT 
+    TO_CHAR(CURRENT_DATE , 'YYMMDD') || LPAD(ATTNO_SEQ.NEXTVAL, 3, '0'), -- SEQUENCE 사용
+    E.EMPNO,
+    TRUNC(CURRENT_DATE),
+    '',
+    '',
+    '',
+    '',
+    'Y'
+FROM EMPLOYEES E
+LEFT JOIN ATTENDANCERECORD A 
+    ON E.EMPNO = A.EMPNO 
+    AND A.WORK_DATE = TRUNC(CURRENT_DATE)
+WHERE A.EMPNO IS NULL
+</insert>
+
+<update id="dropSequence">
+    BEGIN
+        EXECUTE IMMEDIATE 'DROP SEQUENCE ATTNO_SEQ';
+    EXCEPTION
+        WHEN OTHERS THEN NULL;
+    END;
+</update>
+
+<update id="createSequence">
+    CREATE SEQUENCE ATTNO_SEQ
+        START WITH 1
+        INCREMENT BY 1
+        NOCACHE
+        NOCYCLE
+</update>
+
+<!--연차 가져오기
+::: 결재 완료 처리된 휴가 ""해당하는 사원에 한해서""리스트를 전체~!!!! 가져온다.
+-->
+<select id="leaveListByEmpno" resultType="map" parameterType="string">
+   		SELECT t1.EMPNO, t2.NAME,
+    		START_DATE ,  END_DATE  
+			FROM APPROVAL t1
+			JOIN EMPLOYEES t2 ON t1.EMPNO = t2.EMPNO
+			WHERE t1.EMPNO = #{empno}
+			AND APPROVAL_STATUS = 'ST04'
+			AND FORM_ID LIKE 'BC%'
+</select>
+<!--연차 가져오기
+::: 결재 완료 처리된 휴가 리스트를 """오늘 날짜에 연차인 사람"""""만 가져온다.
+-->
+<select id="leaveList" resultType="map">
+   		SELECT t1.EMPNO, t2.NAME,
+    		START_DATE ,  END_DATE  
+			FROM APPROVAL t1
+			JOIN EMPLOYEES t2 ON t1.EMPNO = t2.EMPNO
+			WHERE CURRENT_DATE BETWEEN START_DATE AND END_DATE 
+			AND APPROVAL_STATUS = 'ST04'
+			AND FORM_ID LIKE 'BC%'
+</select>
+
+<!-- 연차 업데이트 쿼리 
+:::오늘자 기준으로 연차인 사람들의 WORK_STATUS를 TBL_COMM 테이블에 있는 'AT05' (연차) 값으로 업데이트
+-->
+<update id="updateAttendanceForLeave">
+    UPDATE ATTENDANCERECORD
+    SET WORK_STATUS = (
+        SELECT CODE
+        FROM TBL_COMM
+        WHERE CODE = 'AT05' 
+    )
+    WHERE WORK_DATE = TRUNC(CURRENT_DATE)
+    AND EMPNO IN (
+            SELECT t1.EMPNO
+            FROM APPROVAL t1
+            JOIN EMPLOYEES t2 ON t1.EMPNO = t2.EMPNO
+            WHERE CURRENT_DATE BETWEEN START_DATE AND END_DATE 
+            AND APPROVAL_STATUS = 'ST04'
+            AND FORM_ID LIKE 'BC%'
+    )
+</update>
+
+<!-- 출근시간 등록 -->
+<update id="workInCheck" parameterType="map">
+    UPDATE ATTENDANCERECORD
+    SET WORKIN_TIME = TO_DATE(#{workin_time}, 'YYYY-MM-DD HH24:MI:SS')
+    WHERE EMPNO = #{empno}
+    AND ATTNO IN (
+        SELECT ATTNO 
+        FROM ATTENDANCERECORD 
+        WHERE ATTNO LIKE CONCAT(#{attno}, '%')
+    )
+    AND WORKIN_TIME IS NULL
+</update>
+<!-- 퇴근시간 등록 -->
+<update id="workOutCheck" parameterType="map">
+    UPDATE ATTENDANCERECORD
+    SET WORKOUT_TIME = TO_DATE(#{workout_time}, 'YYYY-MM-DD HH24:MI:SS')
+    WHERE EMPNO = #{empno}
+    AND ATTNO IN (
+        SELECT ATTNO 
+        FROM ATTENDANCERECORD 
+        WHERE ATTNO LIKE CONCAT(#{attno}, '%')
+    )
+</update>
+<!-- 근무시간 계산하기 -->
+
+<!-- 출근시간 불러오기 -->
+<select id="loadworktime" parameterType="map" resultType="map">
+SELECT ATTNO, WORKIN_TIME, WORKOUT_TIME ,WORK_STATUS
+FROM ATTENDANCERECORD
+WHERE EMPNO = #{empno} 
+AND ATTNO LIKE CONCAT(#{attno}, '%')
+ORDER BY ATTNO ASC
+</select>
+
+<!---->
+
+
+</mapper>

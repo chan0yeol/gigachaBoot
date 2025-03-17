@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="asd">
+
+<!-- 게시글 작성 - 권한 확인 -->
+<!-- 게시글 작성 - 임시저장          -->
+<!-- 임시저장 조회 - 리스트 -->
+<!-- 임시저장 조회 -                 -->
+<!-- 게시글 작성 - 임시저장->등록    -->
+<!-- 게시글 작성 - 등록              -->
+<!-- 게시물 작성 - 첨부파일 등록     -->
+<!-- 게시글 수정                     -->
+<!-- 게시글 수정 - 첨부파일 등록     -->
+<!-- 게시글 수정 - 첨부파일 삭제     -->
+<!-- 게시물 중요 등록                -->
+<!-- 게시글 삭제                     -->
+<!-- 게시판 조회(게시판리스트) -->
+<select id="getBoardList" resultType="NoticeDto">
+	SELECT 
+		ROW_NUMBER () OVER (ORDER BY n.CREATE_DATE) AS 게시판번호, 
+		e.NAME , TITLE, n.CREATE_DATE,
+		n.UPDATE_DATE, VIEW_COUNT, IMPORTANT,
+			CASE WHEN BOARD_STATUS = 'BS03' THEN '삭제된 게시물입니다.'
+			ELSE TITLE
+			END AS 제목
+		FROM NOTICE n JOIN EMPLOYEES e
+		ON n.EMPNO = e.EMPNO 
+		WHERE BOARD_STATUS IN('BS02', 'BS03')
+		ORDER BY n.CREATE_DATE
+</select>
+
+<!-- 게시글 조회 - 상세조회          -->
+<!-- 게시글 조회 -조회수 업데이트    -->
+
+
+
+
+  
+  
+ 
+  
+  
+</mapper>

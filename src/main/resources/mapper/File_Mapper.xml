@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.repository.FileDaoImpl">
+	<insert id="insertFile">
+		<selectKey keyProperty="file_id" resultType="String" order="BEFORE">
+	    	SELECT NVL(MAX(FILE_ID), 0)+1 
+		     FROM TBL_FILE
+    	</selectKey>
+		INSERT INTO TBL_FILE(FILE_ID,ORIGIN_NAME,FILE_NAME,CREATE_EMP,FILE_PATH
+			<if test="list[0].approval_id != null">, APPROVAL_ID</if>
+			<if test="list[0].code != null">, CODE</if>
+		)
+		<foreach collection="list" item="file" separator=" UNION ALL " index="i">
+	       SELECT #{file_id} + #{i} , #{file.origin_name}, #{file.file_name}, #{file.create_emp}, #{file.file_path}
+			<if test="file.approval_id != null">, #{file.approval_id}</if>
+			<if test="file.code != null">, #{file.code}</if> 
+			FROM DUAL
+	    </foreach>
+	</insert>
+	
+	<select id="selectFile" resultType="fileDto">
+		SELECT FILE_ID , FILE_PATH, FILE_NAME , ORIGIN_NAME
+			FROM TBL_FILE 
+			WHERE APPROVAL_ID = #{approval_id}
+			<if test="file_id != null">AND FILE_ID = #{file_id}</if>
+	</select>
+	
+</mapper>

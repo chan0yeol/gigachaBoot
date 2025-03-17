@@ -1,0 +1,289 @@
+@charset "UTF-8";
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f5f7f9;
+    margin: 0;
+    padding: 0;
+    overflow-x: auto; /* 가로 스크롤 허용 */
+}
+
+/* 헤더 스타일 */
+.header {
+    background-color: white;
+    padding: 15px 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.logo span {
+    color: #2196F3;
+}
+
+/* 제목 스타일 */
+.main-title {
+    background-color: #2196F3;
+    color: white;
+    padding: 15px 20px;
+    font-size: 20px;
+    font-weight: bold;
+    width: 100%;
+}
+
+/* 근태 관리 컨테이너 */
+.attendance-container {
+    padding: 20px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    overflow-x: auto;
+}
+
+/* 시간 카드 스타일 */
+.time-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+    overflow-x: auto;
+}
+
+/* 현재 시간 표시 */
+.current-time {
+    padding: 15px 20px;
+    background-color: #2196F3;
+    color: white;
+    border-radius: 30px;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.work-time {
+    font-size: 18px;
+    color: #555;
+    margin-top: 20px;
+}
+
+.time-display {
+    font-size: 42px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+/* 버튼 스타일 */
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.btn-check-in {
+    background-color: #26c6da;
+    color: white;
+    border: none;
+    padding: 10px 40px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-check-in:hover {
+    background-color: #0097a7;
+}
+
+.btn-check-out {
+    background-color: white;
+    color: #333;
+    border: 1px solid #ddd;
+    padding: 10px 40px;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.btn-check-out:hover {
+    background-color: #f5f5f5;
+}
+
+/* 공지 스타일 */
+.notice {
+    margin-top: 15px;
+    color: #666;
+}
+
+/* 근무 상태 스타일 */
+.work-status {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: space-evenly;
+}
+
+/* 상태 항목 */
+.status-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.status-item .label {
+    color: #666;
+    font-size: 14px;
+}
+
+.status-item .value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+/* 근무 시스템 스타일 */
+.work-system {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+}
+
+.work-system-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* 네비게이션 */
+.navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.nav-link {
+    text-decoration: none;
+    color: #2196F3;
+    display: flex;
+    align-items: center;
+}
+
+/* 기간 선택 영역 스타일 */
+#attperiod {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 기간 선택 아이콘 및 텍스트 */
+#selectperiod {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    display: flex;
+    align-items: center;
+}
+
+/* 연도, 월 선택 박스 */
+#yearSelect, #monthSelect {
+    min-width: 100px;
+    padding: 5px 10px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* 근태 기록 다운로드 버튼 */
+.btn-outline-primary {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-primary:hover {
+    background-color: #2196F3;
+    color: white;
+}
+
+/* 반응형 스타일 */
+@media (max-width: 768px) {
+    .d-flex.align-items-center.justify-content-between {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    #attperiod {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .btn-outline-primary {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* 테이블 스타일 */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: fixed;
+    font-size: 14px;
+}
+
+th, td {
+    padding: 8px 10px;
+    text-align: left;
+    border: 1px solid #e0e0e0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* 스크롤 가능한 테이블 */
+.scrollable-table-container {
+    width: 100%;
+    height: 700px;
+    overflow-y: auto;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+/* 날짜 스타일 */
+.hiredate {
+    display: block;
+    text-align: right;
+}
+
+/* 행 hover 효과 */
+tr.hoverable:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
+}
+
+/* 텍스트 색상 */
+.text-primary {
+    color: #2196F3;
+}
+
+.text-danger {
+    color: #f44336;
+}

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.giga.gw.DepartmentDaoImpl">
+
+    <!-- 부서 목록 가져오기 -->
+    <select id="getDepartments" resultType="map">
+ 	SELECT DEPTNO AS "id", DEPTNAME AS "text", NVL(PARENT_DEPTNO,'#') AS "parent"
+        FROM DEPARTMENTS
+        WHERE USE_YN = 'Y'
+    </select>
+
+    <!-- 부서별 사원 목록 가져오기 -->
+    <select id="getEmployeesByDepartment" resultType="map">
+        SELECT EMPNO AS "id", NAME AS "text", DEPTNO AS "parent"
+        FROM EMPLOYEES
+        ORDER BY DEPTNO ASC
+    </select>
+
+</mapper>
