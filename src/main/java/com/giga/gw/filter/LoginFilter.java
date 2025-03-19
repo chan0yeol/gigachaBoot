@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -17,12 +18,14 @@ import java.util.List;
 @Component
 public class LoginFilter implements Filter {
 
+    private static final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private static final List<String> EXCLUDED_PATHS = Arrays.asList(
+            "/login.do",
+            "/employee/findEmployee.do",
+            "/employee/findEmpno.do",
+            "/resources/**"
+    );
 
-    private ServletRequest request;
-    private ServletResponse response;
-    private FilterChain chain;
-    private static final long serialVersionUID = -1279327977342954449L;
-    private List<String> excludeURL = Arrays.asList("/", "/login.do", "/employee/findEmployee.do", "/employee/findEmpno.do,/resources/**/*");
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
@@ -30,37 +33,53 @@ public class LoginFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse res = (HttpServletResponse) response;
 
+        req.setCharacterEncoding("UTF-8");
+
         String path = req.getServletPath();
 
-        // 클라이언트 요청 정보 로깅
         logClientInfo(req);
 
-        // 제외된 URL이면 필터 통과
-        if (excludeURL.contains(path)) {
-            req.setCharacterEncoding("UTF-8");
+        if (isExcludedPath(path)) {
             chain.doFilter(req, res);
             return;
         }
-        // 로그인 확인
-        HttpSession session = req.getSession();
-        EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
+
+        HttpSession session = req.getSession(false);
+        EmployeeDto loginDto = session != null ? (EmployeeDto) session.getAttribute("loginDto") : null;
 
         if (loginDto == null) {
-            log.warn("미인증 사용자 요청: {}", path);
+            log.warn("로그인 정보 없음 : {}", path);
             res.sendRedirect("/login.do");
-        } else {
-            chain.doFilter(req, res);
+            return;
         }
+
+        chain.doFilter(req, res);
     }
+
+    private boolean isExcludedPath(String path) {
+        return EXCLUDED_PATHS.stream()
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
+    }
+
+
     private void logClientInfo(HttpServletRequest req) {
         String url = StringUtils.defaultIfEmpty(req.getRequestURL().toString(), "-");
         String queryString = StringUtils.defaultIfEmpty(req.getQueryString(), "-");
         String remoteAddr = StringUtils.defaultIfEmpty(req.getRemoteAddr(), "-");
         String userAgent = StringUtils.defaultIfEmpty(req.getHeader("User-Agent"), "-");
-        String refer = StringUtils.defaultIfEmpty(req.getHeader("Referer"), "-");
+        String referer = StringUtils.defaultIfEmpty(req.getHeader("Referer"), "-");
 
-        String clientInfo = String.format("%s?%s : %s \n %s %s \n", url, queryString, remoteAddr, userAgent, refer);
-        log.info("\n \n 클라이언트 정보 {} ", clientInfo);
+//        log.info("\n\n 사용자 정보 :\n URL: {}?{}\n IP: {}\n User-Agent: {}\n Referer: {}",
+//                url, queryString, remoteAddr, userAgent, referer);
     }
 
+    @Override
+    public void init(FilterConfig filterConfig) throws ServletException {
+        log.info("LoginFilter init");
+    }
+
+    @Override
+    public void destroy() {
+        log.info("LoginFilter destroy");
+    }
 }

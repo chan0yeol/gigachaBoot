@@ -1,9 +1,11 @@
 package com.giga.gw.controller;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 
+import com.giga.gw.config.WebSocketHandler;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 public class LoginController {
 	
 	private final ILoginService loginService;
-	
+	private final WebSocketHandler webSocketHandler;
  	@GetMapping("/login.do")
 	public String login() {
 		return "login";
@@ -45,8 +47,12 @@ public class LoginController {
 			return "login";
 		}
 		session.setAttribute("loginDto", employeeDto);
-
-		return "redirect:/";
+        try {
+            webSocketHandler.sendMessageToUser(employeeDto.getEmpno() , "메세지테스트");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "redirect:/";
 	}
 	
 	@GetMapping("/logout.do")

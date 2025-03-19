@@ -102,6 +102,7 @@
 	<%-- 	<%@ include file="./layout/newSide.jsp"%> --%>
 	
 </body>
+<script src="${pageContext.request.contextPath}/resources/js/notificationWebSocket.js"></script>
 <script type="text/javascript">
    // --- 결제선 script 시작 ---- 
 	document.getElementById("line").addEventListener('click', () => {

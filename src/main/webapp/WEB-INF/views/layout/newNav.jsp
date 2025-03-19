@@ -9,7 +9,7 @@
 <body>
 <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="${pageContext.request.contextPath}" class="logo d-flex align-items-center">
+      <a href="/" class="logo d-flex align-items-center">
         <img src="assets/img/logo.png" alt="">
         <span class="d-none d-lg-block">GIGACOMPANY</span>
       </a>
@@ -113,8 +113,21 @@
         </li>
       </ul>
     </nav>
-
   </header>
+<div class="toast" style="
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+">
+  <div class="toast-header">
+    <strong class="me-auto">알림내역</strong>
+    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
+  </div>
+  <div class="toast-body">
+    <p id="toast-text"></p>
+  </div>
+</div>
+<script src="${pageContext.request.contextPath}/resources/js/notificationWebSocket.js"></script>
   <script src="https://bootstrapmade.com/assets/js/demo.js?v=42"></script>
   <script type="text/javascript">
   	var sideIsc = true;
@@ -127,7 +140,6 @@
   			document.body.className= "";
   			sideIsc = true;
   		}
-  		
   	});
   </script>
 </body>

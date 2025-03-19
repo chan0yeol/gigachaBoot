@@ -35,6 +35,7 @@
 	href="${pageContext.request.contextPath}/resources/css/editorStyle.css">
 <link rel="stylesheet"
 	href="https://cdn.ckeditor.com/ckeditor5/44.2.1/ckeditor5.css">
+
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> -->
 <!-- <link rel="stylesheet" -->
 <!-- 	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" /> -->
@@ -174,7 +175,7 @@
 			</div>
 		</div>
 	</div>
-
+\
 	<script
 		src="https://cdn.ckeditor.com/ckeditor5/44.2.1/ckeditor5.umd.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/editor.js"></script>
