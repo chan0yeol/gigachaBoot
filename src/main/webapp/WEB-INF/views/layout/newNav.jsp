@@ -114,19 +114,12 @@
       </ul>
     </nav>
   </header>
-<div class="toast" style="
+<div id="toast-container" style="
     position: absolute;
     bottom: 15px;
     right: 15px;
-">
-  <div class="toast-header">
-    <strong class="me-auto">알림내역</strong>
-    <button type="button" class="btn-close" data-bs-dismiss="toast"></button>
-  </div>
-  <div class="toast-body">
-    <p id="toast-text"></p>
-  </div>
-</div>
+    z-index: 1050;
+"></div>
 <script src="${pageContext.request.contextPath}/resources/js/notificationWebSocket.js"></script>
   <script src="https://bootstrapmade.com/assets/js/demo.js?v=42"></script>
   <script type="text/javascript">

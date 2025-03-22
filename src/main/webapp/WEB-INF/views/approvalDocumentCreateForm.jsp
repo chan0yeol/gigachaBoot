@@ -55,54 +55,54 @@
 					<button class="btn btn-secondary btn-sm" id="saveBtn">결재요청</button>
 					<button class="btn btn-secondary btn-sm" id="tempBtn">임시저장</button>
 					<button class="btn btn-secondary btn-sm" id="cancelBtn" onclick="javascirpt:history.back()">취소</button>
-<!-- 					<button class="btn btn-secondary btn-sm" id="getContent" data-bs-toggle="modal" -->
-<!-- 						data-bs-target="#myModal">컨텐츠만 얻기</button> -->
+					<!-- 					<button class="btn btn-secondary btn-sm" id="getContent" data-bs-toggle="modal" -->
+					<!-- 						data-bs-target="#myModal">컨텐츠만 얻기</button> -->
 				</div>
 				<div class="row" id="contentHtml">
 					<div id="approvalLine" class="mt-3 col-auto ms-auto"></div>
 					<form class="mt-3">
 						<table border="1" class="table">
 							<tbody>
-								<tr>
-									<th>문서번호</th>
-									<td>자동입력</td>
-									<th>기안일자</th>
-									<td>자동입력</td>
-								</tr>
+							<tr>
+								<th>문서번호</th>
+								<td>자동입력</td>
+								<th>기안일자</th>
+								<td>자동입력</td>
+							</tr>
 
-								<tr>
-									<th>기안자</th>
-									<td>${loginDto.name}</td>
-									<th>부서</th>
-									<td>${loginDto.deptno}</td>
-								</tr>
-								<tr>
-									<th>참조자</th>
-									<td><button class="btn btn-secondary btn-sm" id="refBtn">참조자선택버튼</button></td>
-									<th>마감기한</th>
-									<td><input type="date" class="form-control" name="approval_deadline"></td>
-								</tr>
-								<tr>
-									<th>긴급여부</th>
-									<td>긴급 <input type="radio" name="urgency" value="Y">
-										일반 <input type="radio" name="urgency" value="N" checked>
-									</td>
-									<th>서명/도장</th>
-									<td>서명 <input type="radio" value="1" name="signature" checked> 
-										도장 <input type="radio" value="2" name="signature">
-									</td>
-								</tr>
-								<tr id="dateRange">
-									<th>시작날짜</th>
-									<td><input type="date"class="form-control" name="start_date"></td>
-									<th>종료날짜</th>
-									<td><input type="date"class="form-control" name="end_date"></td>
-								</tr>
-								<tr>
-									<th>문서제목</th>
-									<td colspan="3"><input type="text" class="form-control"
-										name="approval_title" tabindex="-1"></td>
-								</tr>
+							<tr>
+								<th>기안자</th>
+								<td>${loginDto.name}</td>
+								<th>부서</th>
+								<td>${loginDto.deptname}</td>
+							</tr>
+							<tr>
+								<th>참조자</th>
+								<td><button class="btn btn-secondary btn-sm" id="refBtn">참조자선택버튼</button></td>
+								<th>마감기한</th>
+								<td><input type="date" class="form-control" name="approval_deadline"></td>
+							</tr>
+							<tr>
+								<th>긴급여부</th>
+								<td>긴급 <input type="radio" name="approval_urgency" value="Y">
+									일반 <input type="radio" name="approval_urgency" value="N" checked>
+								</td>
+								<th>서명/도장</th>
+								<td>서명 <input type="radio" value="1" name="signature" checked>
+									도장 <input type="radio" value="2" name="signature">
+								</td>
+							</tr>
+							<tr id="dateRange">
+								<th>시작날짜</th>
+								<td><input type="date"class="form-control" name="start_date"></td>
+								<th>종료날짜</th>
+								<td><input type="date"class="form-control" name="end_date"></td>
+							</tr>
+							<tr>
+								<th>문서제목</th>
+								<td colspan="3"><input type="text" class="form-control"
+													   name="approval_title" tabindex="-1"></td>
+							</tr>
 
 							</tbody>
 						</table>
@@ -118,7 +118,7 @@
 		</div>
 	</main>
 	<div class="modal" id="myModal" data-bs-backdrop="static"
-		data-bs-keyboard="false">
+		 data-bs-keyboard="false">
 		<div class="modal-dialog">
 			<div class="modal-content">
 
@@ -135,7 +135,7 @@
 					<div id="organization">
 						<h2>조직도</h2>
 						<input type="text" id="searchInputOrganizationTree"
-							placeholder="검색">
+							   placeholder="검색">
 						<div class="row">
 							<div id="organizationTree" class="col-6"></div>
 							<div id="saveLine" class="col-6"></div>
@@ -148,7 +148,7 @@
 					<div id="referece">
 						<h2>참조자</h2>
 						<input type="text" id="searchInputRefereceTree"
-							placeholder="검색">
+							   placeholder="검색">
 						<div class="row">
 							<div id="refereceTree" class="col-6"></div>
 							<hr>
@@ -161,21 +161,20 @@
 
 				<div class="modal-footer">
 					<button type="button" class="btn btn-info" id="lineSaveBtn"
-						onclick="saveApprovalLine()" data-bs-dismiss="modal">결재선
+							onclick="saveApprovalLine()" data-bs-dismiss="modal">결재선
 						저장</button>
 					<button type="button" class="btn btn-success" id="formPickBtn"
-						data-bs-dismiss="modal">선택</button>
+							data-bs-dismiss="modal">선택</button>
 					<button type="button" class="btn btn-success" id="linePickBtn"
-						data-bs-dismiss="modal">선택</button>
+							data-bs-dismiss="modal">선택</button>
 					<button type="button" class="btn btn-success" id="refPickBtn"
-						data-bs-dismiss="modal">선택</button>
+							data-bs-dismiss="modal">선택</button>
 					<button type="button" class="btn btn-danger modalBtn"
-						data-bs-dismiss="modal">닫기</button>
+							data-bs-dismiss="modal">닫기</button>
 				</div>
 			</div>
 		</div>
 	</div>
-\
 	<script
 		src="https://cdn.ckeditor.com/ckeditor5/44.2.1/ckeditor5.umd.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/js/editor.js"></script>

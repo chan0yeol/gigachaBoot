@@ -64,7 +64,7 @@ public class ApprovalLineServiceImpl implements IApprovalLineService{
 		int cnt = approvalLineDao.countApprovalLine(paramMap);
 //		int allCnt = approvalLineDao.countApprovalLine(map.get("approval_id").toString());
 //		System.out.println("\n\n"+cnt+"\n\n");
-		if (row == 1 && cnt > 0) {
+		if (row == 1 || cnt > 0) {
 			if(approvalDao.finalApprovalStatus(paramMap) == 1){
 
 				ApprovalDto approvalDto = approvalDao.selectApprovalById(map.get("approval_id").toString());
