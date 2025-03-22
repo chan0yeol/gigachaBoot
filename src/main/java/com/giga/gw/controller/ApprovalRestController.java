@@ -1,5 +1,6 @@
 package com.giga.gw.controller;
 
+import com.giga.gw.config.WebSocketHandler;
 import com.giga.gw.dto.*;
 import com.giga.gw.repository.IApprovalDao;
 import com.giga.gw.repository.IFileDao;
@@ -38,6 +39,7 @@ public class ApprovalRestController {
     private final IApprovalService approvalService;
     private final IApprovalLineService approvalLineService;
     private final IFileDao fileDao;
+    private final WebSocketHandler webSocketHandler;
 
     @PostMapping("/signatureSave.json")
     public boolean signatureSave(@RequestBody Map<String, Object> map, HttpSession session) {
@@ -84,7 +86,20 @@ public class ApprovalRestController {
         String path;
         path = WebUtils.getRealPath(request.getServletContext(), "/storage");
 //		return result.equals("파일 업로드 성공") ? true: false;
-        return approvalService.insertApproval(approvalDto, files, path);
+        if(approvalService.insertApproval(approvalDto, files, path)) {
+            if(approvalDto.getApproval_urgency().equals("Y")) {
+                try {
+                    webSocketHandler.sendMessageToUser(approvalDto.
+                            getApprovalLineDtos()
+                            .get(0)
+                            .getApprover_empno(), "긴급문서 도착");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return true;
+        }
+        return false;
 //		return false;
     }
 

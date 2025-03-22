@@ -9,7 +9,7 @@
 <body>
 <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="${pageContext.request.contextPath}" class="logo d-flex align-items-center">
+      <a href="/" class="logo d-flex align-items-center">
         <img src="assets/img/logo.png" alt="">
         <span class="d-none d-lg-block">GIGACOMPANY</span>
       </a>
@@ -113,8 +113,14 @@
         </li>
       </ul>
     </nav>
-
   </header>
+<div id="toast-container" style="
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 1050;
+"></div>
+<script src="${pageContext.request.contextPath}/resources/js/notificationWebSocket.js"></script>
   <script src="https://bootstrapmade.com/assets/js/demo.js?v=42"></script>
   <script type="text/javascript">
   	var sideIsc = true;
@@ -127,7 +133,6 @@
   			document.body.className= "";
   			sideIsc = true;
   		}
-  		
   	});
   </script>
 </body>

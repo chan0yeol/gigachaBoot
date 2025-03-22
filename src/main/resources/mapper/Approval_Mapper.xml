@@ -33,23 +33,23 @@
     </select>
     <!-- JSTREE 쿼리  -->
     <select id="getOrganizationTree" resultType="map">
-   SELECT DEPTNO AS "id",
-          DEPTNAME AS "text",
-          NVL(PARENT_DEPTNO,'#') AS "parent",
-          'https://cdn2.iconfinder.com/data/icons/business-1407/32/office_team_teamwork_business_partnership-01-16.png' AS "icon"
-        FROM DEPARTMENTS
-        WHERE USE_YN = 'Y'
-	UNION ALL	
-	SELECT TO_CHAR(EMPNO) AS "id",
-	       NAME || '('|| JOB_TITLE ||')' AS "text",
-	       NVL(DEPTNO,'#') AS "parent", 'https://cdn2.iconfinder.com/data/icons/web-line-2/32/user-16.png' AS "icon"
-		FROM EMPLOYEES t1 
-		LEFT JOIN (SELECT JOB_ID,
-		                  JOB_TITLE
-		           FROM JOBS) t2
-		ON t1.JOB_ID = t2.JOB_ID
-		ORDER BY "parent" ,"id"
-    </select>	
+	SELECT DEPTNO AS "id",
+			  DEPTNAME AS "text",
+			  NVL(PARENT_DEPTNO,'#') AS "parent",
+			  'https://cdn2.iconfinder.com/data/icons/business-1407/32/office_team_teamwork_business_partnership-01-16.png' AS "icon"
+			FROM DEPARTMENTS
+			WHERE USE_YN = 'Y'
+		UNION ALL
+		SELECT TO_CHAR(EMPNO) AS "id",
+			   NAME || '('|| JOB_TITLE ||')' AS "text",
+			   NVL(DEPTNO,'#') AS "parent", 'https://cdn2.iconfinder.com/data/icons/web-line-2/32/user-16.png' AS "icon"
+			FROM EMPLOYEES t1
+			LEFT JOIN (SELECT JOB_ID,
+							  JOB_TITLE
+					   FROM JOBS) t2
+			ON t1.JOB_ID = t2.JOB_ID
+			ORDER BY "parent" ,"id"
+    </select>
     <!-- 에디터 저장 -->
     <insert id="editorSave">
     	INSERT INTO APPROVAL(APPROVAL_ID,
@@ -112,7 +112,7 @@
 	    A.FORM_ID, 
 	    A.APPROVAL_STATUS, 
 	    TO_CHAR(A.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
-	    e2.NAME AS EMPNO, 
+	    A.EMPNO,
 	    A.APPROVAL_TITLE, 
 	    A.APPROVAL_CONTENT,
 	    TO_CHAR(NVL(A.APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE,
@@ -136,35 +136,32 @@
 	</select>
 	    
     <!-- 결재문서 작성 -->
-    <insert id="insertApproval" parameterType="approvalDto">
-    	<selectKey keyProperty="approval_id" resultType="String" order="BEFORE">
-	    	SELECT (#{form_id}) ||
-			            ('DOC' || LPAD(NVL(MAX(SUBSTR(APPROVAL_ID, 9)), '0') + 1, 4, '0')) 
-		     FROM APPROVAL
-    	</selectKey>
-    	INSERT INTO APPROVAL ( APPROVAL_ID,
-    	                      FORM_ID,
-    	                      EMPNO,
-	    					  APPROVAL_TITLE,
-    	                      APPROVAL_CONTENT,
-    	                      APPROVAL_STATUS,
-	    					  APPROVAL_DEADLINE
-	    	<if test="start_date != null">, START_DATE </if>
-	    	<if test="end_date != null">, END_DATE </if>
-	    	)
-    	VALUES (
-		    #{approval_id},
-		    #{form_id}, 
-		    #{empno}, 
-		    #{approval_title}, 
-		    #{approval_content}, 
-		    'ST02', 
-		    #{approval_deadline}
-		    <if test="approval_urgency != null">, #{approval_urgency}</if>
-		    <if test="start_date != null"> , #{start_date} </if>
-		    <if test="end_date != null"> , #{end_date} </if>
-		    )
-    </insert>
+	<!-- 결재문서 작성 -->
+	<insert id="insertApproval" parameterType="approvalDto">
+		<selectKey keyProperty="approval_id" resultType="String" order="BEFORE">
+			SELECT (#{form_id}) ||
+			('DOC' || LPAD(NVL(MAX(SUBSTR(APPROVAL_ID, 9)), '0') + 1, 4, '0'))
+			FROM APPROVAL
+		</selectKey>
+		INSERT INTO APPROVAL ( APPROVAL_ID, FORM_ID, EMPNO,
+		APPROVAL_TITLE, APPROVAL_CONTENT,  APPROVAL_STATUS,
+		APPROVAL_DEADLINE, APPROVAL_URGENCY
+		<if test="start_date != null">, START_DATE </if>
+		<if test="end_date != null">, END_DATE </if>
+		)
+		VALUES (
+		#{approval_id},
+		#{form_id},
+		#{empno},
+		#{approval_title},
+		#{approval_content},
+		'ST02',
+		#{approval_deadline},
+		#{approval_urgency}
+		<if test="start_date != null"> , #{start_date} </if>
+		<if test="end_date != null"> , #{end_date} </if>
+		)
+	</insert>
     
     <insert id="insertApprovalTemp" parameterType="approvalDto">
     	<selectKey keyProperty="approval_id" resultType="String" order="BEFORE">

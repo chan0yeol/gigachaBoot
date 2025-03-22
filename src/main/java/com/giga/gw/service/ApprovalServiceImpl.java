@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 
+import com.giga.gw.config.WebSocketHandler;
 import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,7 @@ public class ApprovalServiceImpl implements IApprovalService {
 	private final IApprovalDao approvalDao;
 	private final IApprovalLineDao approvalLineDao;
 	private final IFileDao fileDao;
+	private final WebSocketHandler webSocketHandler;
 
 	@Override
 	public List<Map<String, Object>> getOrganizationTree() {
