@@ -1,4 +1,3 @@
-
 var approvalForm = [];
 
 $(".modalBtn").on('click',()=>{
@@ -33,32 +32,34 @@ $(".modalBtn").on('click',()=>{
 	}); // search end
  
 // 양식 가져오기 
-document.querySelector("#formBtn").addEventListener('click', () => {
-	$('#documentTree').jstree({
-        'plugins': ["search"],
-        "search": {
-            "show_only_matches": true // 검색 결과만 표시
-        },
-        'core': {
-            'data': function (node, cb) {
-                $.ajax({
-                    url: "./formTree.json", // 데이터를 JSON 형태로 가져오는 API
-                    type: "GET",
-                    dataType: "json",
-                    success: function (data) {
-                        console.log(data);
-                        cb(data);
-                    }
-                });
-            }
-        }
-    });
-//		window.open('./formTreeView.do',"popupWindow","width=400,height=600,top=150,left=300");	
-	$("#documentForm").show();
-	$("#formPickBtn").show();
-	$("#myModal").show();
-	
-});
+if(document.querySelector("#formBtn")) {
+	document.querySelector("#formBtn").addEventListener('click', () => {
+		$('#documentTree').jstree({
+	        'plugins': ["search"],
+	        "search": {
+	            "show_only_matches": true // 검색 결과만 표시
+	        },
+	        'core': {
+	            'data': function (node, cb) {
+	                $.ajax({
+	                    url: "./formTreeAjax.do", // 데이터를 JSON 형태로 가져오는 API
+	                    type: "GET",
+	                    dataType: "json",
+	                    success: function (data) {
+	                        console.log(data);
+	                        cb(data);
+	                    }
+	                });
+	            }
+	        }
+	    });
+	//		window.open('./formTreeView.do',"popupWindow","width=400,height=600,top=150,left=300");	
+		$("#documentForm").show();
+		$("#formPickBtn").show();
+		$("#myModal").show();
+		
+	});
+}
 
 function addToApprovalForm(formId, formName) {
 	console.log("aaaa")
@@ -101,7 +102,7 @@ function removeFromApprovalForm(formId) {
 
 async function selectForm(){
     try {
-        const response = await fetch("./selectForm.json", {
+        const response = await fetch("./selectFormAjax.do", {
             method:'post',
             headers:{
                 'Content-Type':'text/plain'
@@ -124,6 +125,9 @@ async function selForm(){
 //				document.querySelector("#dateRange").style.display = 'table-row';
  			$("#dateRange input[type=date]").val(setDate());
 			$("#dateRange").show();
+		}
+		if(data.FORM_ID.startsWith("EC")){
+			$("#ocrDiv").show();
 		}
 //			editor.setHTML(data.FORM_CONTENT);
 		editor.setData(data.FORM_CONTENT);
@@ -226,7 +230,7 @@ function removeFromApprovalLine(empNo) {
 	        console.log("결재선 저장:", approvalJson);
 	
 	        // 서버에 저장 요청
-	        const response = await fetch("./insertSaveLine.json", {
+	        const response = await fetch("./insertSaveLineAjax.do", {
 	            method: "POST",
 	            headers: { 'Content-Type': 'application/json' },
 	            body: JSON.stringify(approvalJson)
@@ -241,6 +245,8 @@ function removeFromApprovalLine(empNo) {
 
 var selectSaveLines = [];
 var organizationData = [];
+if(document.getElementById("lineBtn")){
+	
 	document.getElementById("lineBtn").addEventListener('click', async () => {
 		try {
 			$('#organizationTree').jstree({
@@ -251,7 +257,7 @@ var organizationData = [];
 			        'core': {
 			            'data': function (node, cb) {
 			                $.ajax({
-			                    url: "./tree.json",
+			                    url: "./treeAjax.do",
 			                    type: "GET",
 			                    dataType: "json",
 			                    success: function (data) {
@@ -319,11 +325,12 @@ var organizationData = [];
 		
 	
 	});
+}
 	
 	
 	async function selectSaveLine(){
 	    try {
-	        let response = await fetch("./selectSaveLine.json");
+	        let response = await fetch("./selectSaveLineAjax.do");
 	        if(!response.ok) throw new Error("에러발생");
 	        return await response.json();
 	    } catch (error) {
@@ -406,14 +413,14 @@ var organizationData = [];
     }
     
 	async function getDetail(id){
-		let response = await fetch("./approvalDetail.json?id="+id);
+		let response = await fetch("./approvalDetailAjax.do?id="+id);
 		let data = await response.json(); 
 	    console.log("서버 응답 데이터:", data); 
 	    return data;
 	}
 
 	async function getFile(id){
-		let response = await fetch("./fileList.json?id="+id);
+		let response = await fetch("./fileListAjax.do?id="+id);
 		let data = await response.json(); 
         console.log("서버 응답 데이터:", data); 
         return data;
@@ -431,7 +438,7 @@ var organizationData = [];
 	    };
 	
 	    try {
-	        let response = await fetch("./download.json", {
+	        let response = await fetch("./downloadAjax.do", {
 	            method: "POST",
 	            headers: {
 	                "Content-Type": "application/json"
@@ -535,7 +542,7 @@ $("#refBtn").on("click", function (event) {
         'core': {
             'data': function (node, cb) {
                 $.ajax({
-                    url: "./tree.json",
+                    url: "./treeAjax.do",
                     type: "GET",
                     dataType: "json",
                     success: function (data) {

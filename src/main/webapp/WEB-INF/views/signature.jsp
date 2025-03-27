@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>서명관리</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <script
 	src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -23,8 +23,8 @@
 </style>
 </head> 
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
 		<div id="content" class="col">
@@ -155,7 +155,7 @@
 	})
 
 	async function readSignature(){
-		let response = await fetch('./signatureRead.json');
+		let response = await fetch('./signatureReadAjax.do');
 		
 		if(!response.ok) throw new Error("네트워크 오류")
 			
@@ -167,7 +167,7 @@
 	})
 	
 	async function signatureSave(data) {
-			let response = await fetch('./signatureSave.json',{
+			let response = await fetch('./signatureSaveAjax.do',{
 				method:'post',
 				headers:{
 					'Content-Type':'application/json'

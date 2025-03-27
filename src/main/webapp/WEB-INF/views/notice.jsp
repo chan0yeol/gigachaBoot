@@ -7,7 +7,7 @@
 <meta charset="UTF-8">
 <title>notice</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 
 <style type="text/css">
 
@@ -16,8 +16,8 @@
 
 </head> 
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
 		<div id="content" class="col-10">

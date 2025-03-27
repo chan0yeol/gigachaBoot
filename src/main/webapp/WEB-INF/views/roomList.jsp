@@ -8,7 +8,7 @@
 <head>
 <meta charset="UTF-8">
 <title>회의실 리스트</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <!-- jQuery UI CSS -->
 <link rel="stylesheet"
 	href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -48,8 +48,8 @@
 </style>
 </head>
 <body>
-	<%@ include file="layout/newNav.jsp"%>
-	<%@ include file="layout/newSide.jsp"%>
+	<%@ include file="./layout/newNav.jsp"%>
+	<%@ include file="./layout/newSide.jsp"%>
 	<main id="main" class="main">
 		<div class="row">
 			<div id="content" class="mt-3">
@@ -150,7 +150,6 @@
 					</div>
 					<div class="modal-body">
 					<form id="insertRoomForm" enctype="multipart/form-data">
-<!-- 						<input type="hidden" id="room_id"> -->
 						<div class="mb-3">
 							<label for="room_name" class="form-label">회의실 이름</label> 
 							<input type="text" class="form-control" id="room_name" name="room_name" required>
@@ -162,17 +161,12 @@
 						<div class="mb-3">
 							<label for="image_url" class="form-label">회의실 이미지</label> 
 							<input type="file" class="form-control" id="image_url" name="file" accept="image/*" required>
-<!-- 							<button type="button" id="uploadBtn" class="btn btn-secondary">파일 -->
-<!-- 									선택</button> -->
 						</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary"
 							data-bs-dismiss="modal">취소</button>
 						<button type="button" id="insertFormBtn" class="btn btn-primary">등록</button>
 					</div>
-<!-- 						<button type="button" class="btn btn-secondary" -->
-<!-- 							data-bs-dismiss="modal">취소</button> -->
-<!-- 						<button type="button" id="insertRoomForm" class="btn btn-primary">등록</button> -->
 					</form>
 					</div>
 				</div>
@@ -382,14 +376,14 @@
     			    return response.json(); // JSON 형식의 응답을 파싱
     			})
     			.then(data => {
-    			    console.log(data);
+    			    console.log("서버 응답 데이터:",data);
     			    if(data == true){
     			    	Swal.fire("작성 성공").then(()=>{
     			   			location.reload();  // 페이지 새로고침 또는 수정된 데이터 표시
     			    		
     			    	});
     			    }else{
-    			    	Swal.fire("작성 실패");
+    			    	Swal.fire("로그인 해주세요.");
     			    }
 
 // 					insertModal.hide();
@@ -400,49 +394,6 @@
         	    
         	}
         	
-        	
-        		
-        	
-        	
-//         	    console.log(event.target) //  modal button 
-//         	    var room_id = document.getElementById("room_id").value;
-//         	    var room_name = document.getElementById("room_name").value;
-//     			var capacity = document.getElementById("capacity").value;
-//     			var image_url = document.getElementById("image_url").value;
-
-//     			console.log("전송될 값 :", room_id,room_name, capacity, image_url);
-    			
-//     			var roomDto = {
-//     					room_id: room_id,
-//     					room_name: room_name,
-//     					capacity: capacity,
-//     					image_url: image_url
-//             	    };
-
-//     			fetch("./roomform.do", {
-//     			    method: "GET",
-//     			    headers: {
-//     			        "Content-Type": "application/json"
-//     			    },
-//     			    body: JSON.stringify(roomDto)
-//     			})
-//     			.then(response => {
-//     			    if (!response.ok) {
-//     			        throw new Error("서버 응답 오류: " + response.status);
-//     			    }
-//     			    return response.json(); // JSON 형식의 응답을 파싱
-//     			})
-//     			.then(data => {
-//     			    console.log(data);
-
-// 					updateModal.hide();
-//     			    location.reload();  // 페이지 새로고침 또는 수정된 데이터 표시
-//     			})
-//     			.catch(error => {
-//     			    console.error("Error updating room data:", error);
-//     			});
-
-//         	}
 
 
         }

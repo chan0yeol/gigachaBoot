@@ -1,19 +1,6 @@
 package com.giga.gw.service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-
 import com.giga.gw.config.WebSocketHandler;
-import org.apache.commons.collections4.map.HashedMap;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.giga.gw.dto.ApprovalDto;
 import com.giga.gw.dto.ApprovalLineDto;
 import com.giga.gw.dto.ApprovalReferenceDto;
@@ -21,9 +8,19 @@ import com.giga.gw.dto.FileDto;
 import com.giga.gw.repository.IApprovalDao;
 import com.giga.gw.repository.IApprovalLineDao;
 import com.giga.gw.repository.IFileDao;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.map.HashedMap;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -51,8 +48,8 @@ public class ApprovalServiceImpl implements IApprovalService {
 		int n = approvalDao.insertApproval(approvalDto); // 문서 row
 		int m = 0; // 결재선 row
 		int f = 0; // 파일 row
-		int r = 0; // 참조자 row 
-		
+		int r = 0; // 참조자 row
+
 		// 결재선 추가 로직
 		List<ApprovalLineDto> lineDtos = approvalDto.getApprovalLineDtos();
 		if (lineDtos != null && !lineDtos.isEmpty()) {
@@ -65,7 +62,7 @@ public class ApprovalServiceImpl implements IApprovalService {
 			map.put("approvalLineDtos", lineDtos);
 			m = approvalLineDao.insertApprovalLines(map);
 		}
-		
+
 		// 참조자 추가 로직
 		List<ApprovalReferenceDto> approvalReferenceDtos = approvalDto.getApprovalReferenceDtos();
 		if (approvalReferenceDtos != null && !approvalReferenceDtos.isEmpty()) {
@@ -73,18 +70,18 @@ public class ApprovalServiceImpl implements IApprovalService {
 				refDto.setApproval_id(approvalDto.getApproval_id());
 				System.out.println(refDto.getEmpno());
 			}
-			
+
 			Map<String, Object> refMap = new HashedMap<String, Object>();
 			refMap.put("approval_id", approvalDto.getApproval_id());
 			refMap.put("approvalReferenceDtos", approvalReferenceDtos);
 			r = approvalDao.insertApprovalReferences(refMap);
 		}
-		
-		
+
+
 		if (files.get(0).getSize() == 0) {
 	        return n == 1 && m >= 1;
 	    }
-		
+
 //		if(files != null && files.size() != 0) {
 			File storage = new File(path);
 			if (!storage.exists()) {
@@ -111,22 +108,22 @@ public class ApprovalServiceImpl implements IApprovalService {
 					fileDtos.add(fileDto);
 	                log.info("파일 저장 완료: {}", saveFileName);
 	                System.out.println("\n\n " + fileDtos.toString() + "\n\n");
-	                
+
 	            }
 	        } catch (IOException e) {
 	            log.error("파일 저장 중 오류 발생", e);
 	            result = "파일 업로드 실패";
 	        }
-	        
+
 	        if(!fileDtos.isEmpty()) {
 				f = fileDao.insertFile(fileDtos);
 			}
 	        return n == 1 && m >= 1 && (fileDtos.isEmpty() || f == fileDtos.size());
-		} 
+		}
 //	else {
 //			return n == 1 && m >= 1;
 //		}
-		
+
 //	}
 
 //	@Transactional
@@ -148,7 +145,7 @@ public class ApprovalServiceImpl implements IApprovalService {
 			map.put("approval_id", approvalDto.getApproval_id());
 			map.put("approvalLineDtos", lineDtos);
 			m = approvalLineDao.insertApprovalLines(map);
-			
+
 			return n == 1 && m >= 1 ? 1 : 0;
 		}
 
@@ -236,6 +233,16 @@ public class ApprovalServiceImpl implements IApprovalService {
 	@Override
 	public List<Map<String, Object>> selectApprovalReference(String empno) {
 		return approvalDao.selectApprovalReference(empno);
+	}
+
+	@Override
+	public Map<String, Object> selectApprovalLineStats(String empno) {
+		return approvalDao.selectApprovalLineStats(empno);
+	}
+
+	@Override
+	public Map<String, Object> selectApprovalStats(String empno) {
+		return approvalDao.selectApprovalStats(empno);
 	}
 
 }

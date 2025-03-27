@@ -41,7 +41,8 @@ const {
 	TableColumnResize,
 	TableProperties,
 	TableToolbar,
-	Underline
+	Underline,
+	SourceEditing
 } = window.CKEDITOR;
 
 const LICENSE_KEY =
@@ -69,7 +70,8 @@ const editorConfig = {
 			'alignment',
 			'|',
 			'outdent',
-			'indent'
+			'indent',
+			 'sourceEditing'
 		],
 		shouldNotGroupWhenFull: false
 	},
@@ -110,7 +112,8 @@ const editorConfig = {
 		TableColumnResize,
 		TableProperties,
 		TableToolbar,
-		Underline
+		Underline,
+		SourceEditing
 	],
 	fontFamily: {
 		supportAllValues: true

@@ -4,9 +4,9 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>기안수정</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/editorStyle.css">
 <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/44.2.1/ckeditor5.css">
@@ -35,12 +35,21 @@
 	href="https://cdn.ckeditor.com/ckeditor5/44.2.1/ckeditor5.css">
 </head>
 <body>
-	<%@ include file="layout/newNav.jsp" %>
-	<%@ include file="layout/newSide.jsp" %>
+	<%@ include file="./layout/newNav.jsp" %>
+	<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
 		<div id="content" class="col">
-			<h3 class="content_title">기안문작성</h3>
+			<div class="pagetitle">
+				<h1>기안문 수정</h1>
+				<nav>
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}">Home</a></li>
+						<li class="breadcrumb-item">전자결재</li>
+						<li class="breadcrumb-item active">기안문 수정</li>
+					</ol>
+				</nav>
+			</div>
 			<div class="content_nav">
 				<button class="btn btn-secondary btn-sm" id="formBtn">문서양식</button>
 				<button class="btn btn-secondary btn-sm" id="lineBtn">결재선</button>
@@ -69,8 +78,8 @@
 							</tr>
 							<tr>
 								<th>긴급여부</th>
-								<td>긴급 <input type="radio" name="urgency" value="Y">
-									일반 <input type="radio" name="urgency" value="N" checked>
+								<td>긴급 <input type="radio" name="approval_urgency" value="Y">
+									일반 <input type="radio" name="approval_urgency" value="N" checked>
 								</td>
 								<th>서명/도장</th>
 								<td>서명 <input type="radio" value="1" name="signature" checked>
@@ -80,11 +89,11 @@
 							<tr id="dateRange">
 								<th>시작날짜</th>
 								<td>
-									<input type="date" name="start_date">
+									<input type="date" name="start_date" value="${approval.start_date}">
 								</td>
 								<th>종료날짜</th>
 								<td>
-									<input type="date" name="end_date">
+									<input type="date" name="end_date" value="${approval.start_date}">
 								</td>
 							</tr>
 							<tr>

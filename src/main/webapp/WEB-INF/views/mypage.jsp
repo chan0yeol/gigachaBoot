@@ -6,37 +6,32 @@
 <head>
 <meta charset="UTF-8">
 <title>마이페이지</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 
 <style type="text/css">
-.card img {
-  width: 120px;  /* 원하는 크기로 조정 */
-  height: 120px; /* 비율을 맞추기 위해 동일하게 설정 */
-  object-fit: cover; /* 이미지를 비율에 맞게 잘라서 채우기 */
-}
-.nav-item {
-  margin-right: 50px; /* 원하는 간격을 px 단위로 조정 */
+#profile-img {
+    width: 200px; /* 이미지 너비 조정 */
+    height: 200px; /* 이미지 높이 조정 */
+    display: block; /* 블록 요소로 변경 */
+    margin: 0 auto; /* 가운데 정렬 */
+    object-fit: cover; /* 이미지 비율 유지 및 영역에 맞춤 */
 }
 </style>
 </head> 
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
-		<div id="content" class="col-12">
+		<div id="content" class="col">
 			<h3 class="content_title">마이페이지</h3>
 			
 			<div class="row">
 		        <div class="col-xl-4">
 		          <div class="card">
 		          	<div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
-		            <img src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="Profile">
-		              <h2>Kevin Anderson</h2>
-		              <h3>Web Designer</h3>
-		              <div class="social-links mt-2">
-		              	<button type="button">사진변경</button>
-		              </div>
+		            <img id="profile-img" src="https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png" alt="기본이미지">
+		              <h4>이름</h4>
 		            </div>
 		          </div>
 		        </div>
@@ -56,10 +51,6 @@
 		                </li>
 		
 		                <li class="nav-item" role="presentation">
-		                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-settings" aria-selected="false" tabindex="-1" role="tab">Settings</button>
-		                </li>
-		
-		                <li class="nav-item" role="presentation">
 		                  <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password" aria-selected="false" tabindex="-1" role="tab">비밀번호 변경하기</button>
 		                </li>
 		
@@ -67,31 +58,41 @@
 		              <div class="tab-content pt-2">
 		
 		                <div class="tab-pane fade show active profile-overview" id="profile-overview" role="tabpanel">
-		                  <h5 class="card-title">Profile Details</h5>
+		                  <h5 class="card-title"></h5>
 		
 		                  <div class="row">
 		                    <div class="col-lg-3 col-md-4 label ">사번</div>
-		                    <div class="col-lg-9 col-md-8">Kevin Anderson</div>
+		                    <div class="col-lg-9 col-md-8"></div>
 		                  </div>
 		
 		                  <div class="row">
 		                    <div class="col-lg-3 col-md-4 label">직급</div>
-		                    <div class="col-lg-9 col-md-8">Lueilwitz, Wisoky and Leuschke</div>
+		                    <div class="col-lg-9 col-md-8"></div>
 		                  </div>
 		
 		                  <div class="row">
 		                    <div class="col-lg-3 col-md-4 label">부서</div>
-		                    <div class="col-lg-9 col-md-8">Web Designer</div>
+		                    <div class="col-lg-9 col-md-8"></div>
+		                  </div>
+		                  
+		                  <div class="row">
+		                    <div class="col-lg-3 col-md-4 label">입사일</div>
+		                    <div class="col-lg-9 col-md-8"></div>
+		                  </div>
+		                  
+		                  <div class="row">
+		                    <div class="col-lg-3 col-md-4 label">재직상태</div>
+		                    <div class="col-lg-9 col-md-8"></div>
 		                  </div>
 		
 		                  <div class="row">
 		                    <div class="col-lg-3 col-md-4 label">내선번호</div>
-		                    <div class="col-lg-9 col-md-8">USA</div>
+		                    <div class="col-lg-9 col-md-8"></div>
 		                  </div>
 		
 		                  <div class="row">
 		                    <div class="col-lg-3 col-md-4 label">이메일</div>
-		                    <div class="col-lg-9 col-md-8">A108 Adam Street, New York, NY 535022</div>
+		                    <div class="col-lg-9 col-md-8"></div>
 		                  </div>
 		
 		                </div>
@@ -101,52 +102,81 @@
 		                  <!-- Profile Edit Form -->
 		                  <form>
 		                    <div class="row mb-3">
-		                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">사번</label>
+		                      <label for="empno" class="col-md-4 col-lg-3 col-form-label">사번</label>
 		                      <div class="col-md-8 col-lg-9">
-		                        <input name="fullName" type="text" class="form-control" id="fullName" value="Kevin Anderson">
-		                      </div>
-		                    </div>
-		
-		
-		                    <div class="row mb-3">
-		                      <label for="company" class="col-md-4 col-lg-3 col-form-label">성명</label>
-		                      <div class="col-md-8 col-lg-9">
-		                        <input name="company" type="text" class="form-control" id="company" value="Lueilwitz, Wisoky and Leuschke">
+		                        <input name="empno" type="text" class="form-control" id="empno">
 		                      </div>
 		                    </div>
 		
 		                    <div class="row mb-3">
-		                      <label for="Job" class="col-md-4 col-lg-3 col-form-label">성별</label>
+		                      <label for="name" class="col-md-4 col-lg-3 col-form-label">성명</label>
 		                      <div class="col-md-8 col-lg-9">
-		                        <input name="job" type="text" class="form-control" id="Job" value="Web Designer">
+		                        <input name="name" type="text" class="form-control" id="name">
+		                      </div>
+		                    </div>
+		                    
+		                    <div class="row mb-3">
+		                      <label for="birthday" class="col-md-4 col-lg-3 col-form-label">생년월일</label>
+		                      <div class="col-md-8 col-lg-9">
+		                        <input name="birthday" type="text" class="form-control" id="birthday">
 		                      </div>
 		                    </div>
 		
 		                    <div class="row mb-3">
-		                      <label for="Country" class="col-md-4 col-lg-3 col-form-label">Country</label>
+		                      <label for="gender" class="col-md-4 col-lg-3 col-form-label">성별</label>
 		                      <div class="col-md-8 col-lg-9">
-		                        <input name="country" type="text" class="form-control" id="Country" value="USA">
+		                        <input name="gender" type="text" class="form-control" id="gender">
 		                      </div>
 		                    </div>
 		
 		                    <div class="row mb-3">
-		                      <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
+		                      <label for="adress" class="col-md-4 col-lg-3 col-form-label">주소</label>
 		                      <div class="col-md-8 col-lg-9">
-		                        <input name="address" type="text" class="form-control" id="Address" value="A108 Adam Street, New York, NY 535022">
+		                        <input name="adress" type="text" class="form-control" id="adress">
+		                      </div>
+		                    </div>
+		                    
+		                    <div class="row mb-3">
+		                      <label for="Address" class="col-md-4 col-lg-3 col-form-label">내선번호</label>
+		                      <div class="col-md-8 col-lg-9">
+		                        <input name="tel" type="text" class="form-control" id="tel">
 		                      </div>
 		                    </div>
 		
 		                    <div class="row mb-3">
-		                      <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
+		                      <label for="Phone" class="col-md-4 col-lg-3 col-form-label">전화번호</label>
 		                      <div class="col-md-8 col-lg-9">
-		                        <input name="phone" type="text" class="form-control" id="Phone" value="(436) 486-3538 x29071">
+		                        <input name="phone" type="text" class="form-control" id="Phone">
+		                        	<button class="btn btn-secondary btn-sm mt-1" type="button" onclick="verifyPhone()">인증하기</button><br>
 		                      </div>
 		                    </div>
 		
 		                    <div class="row mb-3">
-		                      <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
+		                      <label for="email" class="col-md-4 col-lg-3 col-form-label">이메일</label>
 		                      <div class="col-md-8 col-lg-9">
-		                        <input name="email" type="email" class="form-control" id="Email" value="k.anderson@example.com">
+		                        <input name="email" type="email" class="form-control" id="email">
+		                        <button class="btn btn-secondary btn-sm mt-1" type="button" onclick="verifyPhone()">인증하기</button><br>
+		                      </div>
+		                    </div>
+		                    
+		                    <div class="row mb-3">
+		                      <label for="degree" class="col-md-4 col-lg-3 col-form-label">최종학력</label>
+		                      <div class="col-md-8 col-lg-9">
+		                        <input name="degree" type="text" class="form-control" id="degree">
+		                      </div>
+		                    </div>
+		                    
+		                    <div class="row mb-3">
+		                      <label for="school" class="col-md-4 col-lg-3 col-form-label">학교</label>
+		                      <div class="col-md-8 col-lg-9">
+		                        <input name="school" type="text" class="form-control" id="school">
+		                      </div>
+		                    </div>
+		                    
+		                    <div class="row mb-3">
+		                      <label for="major" class="col-md-4 col-lg-3 col-form-label">전공</label>
+		                      <div class="col-md-8 col-lg-9">
+		                        <input name="major" type="text" class="form-control" id="major">
 		                      </div>
 		                    </div>
 		
@@ -160,44 +190,7 @@
 		
 		                <div class="tab-pane fade pt-3" id="profile-settings" role="tabpanel">
 		
-		                  <!-- Settings Form -->
-		                  <form>
-		
-		                    <div class="row mb-3">
-		                      <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Email Notifications</label>
-		                      <div class="col-md-8 col-lg-9">
-		                        <div class="form-check">
-		                          <input class="form-check-input" type="checkbox" id="changesMade" checked="">
-		                          <label class="form-check-label" for="changesMade">
-		                            Changes made to your account
-		                          </label>
-		                        </div>
-		                        <div class="form-check">
-		                          <input class="form-check-input" type="checkbox" id="newProducts" checked="">
-		                          <label class="form-check-label" for="newProducts">
-		                            Information on new products and services
-		                          </label>
-		                        </div>
-		                        <div class="form-check">
-		                          <input class="form-check-input" type="checkbox" id="proOffers">
-		                          <label class="form-check-label" for="proOffers">
-		                            Marketing and promo offers
-		                          </label>
-		                        </div>
-		                        <div class="form-check">
-		                          <input class="form-check-input" type="checkbox" id="securityNotify" checked="" disabled="">
-		                          <label class="form-check-label" for="securityNotify">
-		                            Security alerts
-		                          </label>
-		                        </div>
-		                      </div>
-		                    </div>
-		
-		                    <div class="text-center">
-		                      <button type="submit" class="btn btn-primary">Save Changes</button>
-		                    </div>
-		                  </form><!-- End settings Form -->
-		
+		                 
 		                </div>
 		
 		                <div class="tab-pane fade pt-3" id="profile-change-password" role="tabpanel">
@@ -205,21 +198,21 @@
 		                  <form>
 		
 		                    <div class="row mb-3">
-		                      <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
+		                      <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">현재 비밀번호</label>
 		                      <div class="col-md-8 col-lg-9">
 		                        <input name="password" type="password" class="form-control" id="currentPassword">
 		                      </div>
 		                    </div>
 		
 		                    <div class="row mb-3">
-		                      <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
+		                      <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">새 비밀번호</label>
 		                      <div class="col-md-8 col-lg-9">
 		                        <input name="newpassword" type="password" class="form-control" id="newPassword">
 		                      </div>
 		                    </div>
 		
 		                    <div class="row mb-3">
-		                      <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
+		                      <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">비밀번호 확인</label>
 		                      <div class="col-md-8 col-lg-9">
 		                        <input name="renewpassword" type="password" class="form-control" id="renewPassword">
 		                      </div>
@@ -239,15 +232,6 @@
 		
 		        </div>
       </div>
-			
-			
-			
-			
-			
-			
- 			
-			
-			
 			
 		</div>
 	</div>

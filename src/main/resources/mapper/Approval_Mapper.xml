@@ -1,141 +1,124 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.giga.gw.repository.IApprovalDao">
-	<sql id="approvalStatusCase">
-		CASE APPROVAL_STATUS
-        WHEN 'ST01' THEN '[임시저장]'
-        WHEN 'ST02' THEN '[결재대기]'
-        WHEN 'ST03' THEN '[진행중]'
-        WHEN 'ST04' THEN '[결재완료]'
-        WHEN 'ST05' THEN '[결재반려]'
-		END
-	</sql>
-	<sql id="dateFormat">
-		TO_CHAR(CREATE_DATE, 'YYYY-MM-DD') AS CREATE_DATE,
-   		TO_CHAR(NVL(APPROVAL_DEADLINE, CURRENT_TIMESTAMP), 'YYYY-MM-DD') AS APPROVAL_DEADLINE
-	</sql>
-  <!-- 부서 목록 가져오기 -->
-    <select id="getDepartments" resultType="map">
- 	SELECT DEPTNO AS "id",
- 	       DEPTNAME AS "text",
- 	       NVL(PARENT_DEPTNO,'#') AS "parent"
-        FROM DEPARTMENTS
-        WHERE USE_YN = 'Y'
-    </select>
+	<!-- 부서 목록 가져오기 -->
+	<select id="getDepartments" resultType="map">
+		SELECT DEPTNO AS "id", DEPTNAME AS "text", NVL(PARENT_DEPTNO,'#') AS "parent"
+		FROM DEPARTMENTS
+		WHERE USE_YN = 'Y'
+	</select>
 
-    <!-- 부서별 사원 목록 가져오기 -->
-    <select id="getEmployeesByDepartment" resultType="map">
-        SELECT EMPNO AS "id",
-               NAME AS "text",
-               DEPTNO AS "parent"
-        FROM EMPLOYEES
-        ORDER BY DEPTNO ASC
-    </select>
-    <!-- JSTREE 쿼리  -->
-    <select id="getOrganizationTree" resultType="map">
-	SELECT DEPTNO AS "id",
-			  DEPTNAME AS "text",
-			  NVL(PARENT_DEPTNO,'#') AS "parent",
-			  'https://cdn2.iconfinder.com/data/icons/business-1407/32/office_team_teamwork_business_partnership-01-16.png' AS "icon"
-			FROM DEPARTMENTS
-			WHERE USE_YN = 'Y'
+	<!-- 부서별 사원 목록 가져오기 -->
+	<select id="getEmployeesByDepartment" resultType="map">
+		SELECT EMPNO AS "id", NAME AS "text", DEPTNO AS "parent"
+		FROM EMPLOYEES
+		ORDER BY DEPTNO ASC
+	</select>
+	<!-- JSTREE 쿼리  -->
+	<select id="getOrganizationTree" resultType="map">
+		SELECT DEPTNO AS "id", DEPTNAME AS "text", NVL(PARENT_DEPTNO,'#') AS "parent", 'https://cdn2.iconfinder.com/data/icons/business-1407/32/office_team_teamwork_business_partnership-01-16.png' AS "icon", NULL AS "JOB_ID"
+		FROM DEPARTMENTS
+		WHERE USE_YN = 'Y'
 		UNION ALL
-		SELECT TO_CHAR(EMPNO) AS "id",
-			   NAME || '('|| JOB_TITLE ||')' AS "text",
-			   NVL(DEPTNO,'#') AS "parent", 'https://cdn2.iconfinder.com/data/icons/web-line-2/32/user-16.png' AS "icon"
-			FROM EMPLOYEES t1
-			LEFT JOIN (SELECT JOB_ID,
-							  JOB_TITLE
-					   FROM JOBS) t2
-			ON t1.JOB_ID = t2.JOB_ID
-			ORDER BY "parent" ,"id"
-    </select>
-    <!-- 에디터 저장 -->
-    <insert id="editorSave">
-    	INSERT INTO APPROVAL(APPROVAL_ID,
-    	                     FORM_ID,
-    	                     EMPNO,
-    	                     APPROVAL_TITLE,
-    	                     APPROVAL_CONTENT,
-    	                     CREATE_DATE,
-    	                     APPROVAL_STATUS)
-    	VALUES ('APP005',
-    	        'HR001',
-    	        '2501001',
-    	        '테스트',
-    	        #{content},
-    	        CURRENT_DATE,
-    	        'ST01')
-    </insert>
-    <!-- 에디터 불러오기 -->
-    <select id="editorRead" resultType="String">
-    	SELECT APPROVAL_CONTENT
-    	FROM APPROVAL
-    	WHERE APPROVAL_ID = 'APP005'
-    </select>
-    
-    <!-- 양식별 사용중인 결재문서 갯수 -->
-    <select id="countApproval" resultType="Integer">
-    	SELECT COUNT(*)
-    	FROM APPROVAL
-    	WHERE FORM_ID = #{form_id}
-    </select>
-    
+		SELECT TO_CHAR(EMPNO) AS "id", NAME || '('|| JOB_TITLE ||')' AS "text", NVL(DEPTNO,'#') AS "parent", 'https://cdn2.iconfinder.com/data/icons/web-line-2/32/user-16.png' AS "icon", t1.JOB_ID AS "JOB_ID"
+		FROM EMPLOYEES t1
+		LEFT JOIN (SELECT JOB_ID, JOB_TITLE, JOB_LEVEL FROM JOBS) t2
+		ON t1.JOB_ID = t2.JOB_ID
+		<if test="empno != null">
+			WHERE t1.EMPNO != #{empno}
+			AND EXISTS (
+			SELECT 1
+			FROM EMPLOYEES e
+			LEFT JOIN JOBS j ON e.JOB_ID = j.JOB_ID
+			WHERE e.EMPNO = #{empno}
+			AND j.JOB_LEVEL >= t2.JOB_LEVEL
+			)
+		</if>
+		ORDER BY "parent", JOB_ID , "id"
+	</select>
+	<!-- JSTREE 자기보다 낮은 직급 안나오고, 자기 자신 안나오는 쿼리 -->
+	<select id="getOrganizationTreeHigh" resultType="map">
+		SELECT DEPTNO AS "id", DEPTNAME AS "text", NVL(PARENT_DEPTNO,'#') AS "parent", 'https://cdn2.iconfinder.com/data/icons/business-1407/32/office_team_teamwork_business_partnership-01-16.png' AS "icon"
+		FROM DEPARTMENTS
+		WHERE USE_YN = 'Y'
+		UNION ALL
+		SELECT TO_CHAR(EMPNO) AS "id", NAME || '('|| JOB_TITLE ||')' AS "text", NVL(DEPTNO,'#') AS "parent", 'https://cdn2.iconfinder.com/data/icons/web-line-2/32/user-16.png' AS "icon"
+		FROM EMPLOYEES t1
+				 LEFT JOIN (SELECT JOB_ID, JOB_TITLE, JOB_LEVEL
+							FROM JOBS) t2
+						   ON t1.JOB_ID = t2.JOB_ID
+
+		ORDER BY "parent" ,"id"
+	</select>
+	<!-- 에디터 저장 -->
+	<insert id="editorSave">
+		INSERT INTO APPROVAL(APPROVAL_ID, FORM_ID, EMPNO, APPROVAL_TITLE, APPROVAL_CONTENT, CREATE_DATE, APPROVAL_STATUS)
+		VALUES ('APP005','HR001','2501001','테스트',#{content},CURRENT_DATE,'ST01')
+	</insert>
+	<!-- 에디터 불러오기 -->
+	<select id="editorRead" resultType="String">
+		SELECT APPROVAL_CONTENT FROM APPROVAL WHERE APPROVAL_ID = 'APP005'
+	</select>
+
+	<!-- 양식별 사용중인 결재문서 갯수 -->
+	<select id="countApproval" resultType="Integer">
+		SELECT COUNT(*) FROM APPROVAL WHERE FORM_ID = #{form_id}
+	</select>
+
 	<resultMap id="ApprovalResultMap" type="approvalDto">
-	    <id property="approval_id" column="APPROVAL_ID"/>
-	    <result property="form_id" column="FORM_ID"/>
-	    <result property="approval_status" column="APPROVAL_STATUS"/>
-	    <result property="create_date" column="CREATE_DATE"/>
-	    <result property="empno" column="EMPNO"/>
-	    <result property="approval_title" column="APPROVAL_TITLE"/>
-	    <result property="approval_content" column="APPROVAL_CONTENT" javaType="java.lang.String"/>
-	    <result property="approval_deadline" column="APPROVAL_DEADLINE"/>
-	    <result property="update_date" column="UPDATE_DATE"/>
-	    <result property="update_empno" column="UPDATE_EMPNO"/>
-	    <result property="start_date" column="START_DATE"/>
-	    <result property="end_date" column="END_DATE"/>
-    
-    <!-- 결재라인 리스트 매핑 -->
-    <collection property="approvalLineDtos" ofType="approvalLineDto">
-        <id property="line_id" column="LINE_ID"/>
-        <result property="sequence" column="SEQUENCE"/>
-        <result property="approver_empno" column="APPROVER_EMPNO"/>
-        <result property="status_id" column="STATUS_ID"/>
-        <result property="use_yn" column="USE_YN"/>
-        <result property="signature" column="SIGNATURE" javaType="java.lang.String"/>
-    </collection>
-</resultMap>
-	
+		<id property="approval_id" column="APPROVAL_ID"/>
+		<result property="form_id" column="FORM_ID"/>
+		<result property="approval_status" column="APPROVAL_STATUS"/>
+		<result property="create_date" column="CREATE_DATE"/>
+		<result property="empno" column="EMPNO"/>
+		<result property="approval_title" column="APPROVAL_TITLE"/>
+		<result property="approval_content" column="APPROVAL_CONTENT" javaType="java.lang.String"/>
+		<result property="approval_deadline" column="APPROVAL_DEADLINE"/>
+		<result property="update_date" column="UPDATE_DATE"/>
+		<result property="update_empno" column="UPDATE_EMPNO"/>
+		<result property="start_date" column="START_DATE"/>
+		<result property="end_date" column="END_DATE"/>
+
+		<!-- 결재라인 리스트 매핑 -->
+		<collection property="approvalLineDtos" ofType="approvalLineDto">
+			<id property="line_id" column="LINE_ID"/>
+			<result property="sequence" column="SEQUENCE"/>
+			<result property="approver_empno" column="APPROVER_EMPNO"/>
+			<result property="status_id" column="STATUS_ID"/>
+			<result property="use_yn" column="USE_YN"/>
+			<result property="signature" column="SIGNATURE" javaType="java.lang.String"/>
+		</collection>
+	</resultMap>
+
 	<select id="selectApprovalById" resultMap="ApprovalResultMap" parameterType="String">
-	SELECT 
-	    A.APPROVAL_ID, 
-	    A.FORM_ID, 
-	    A.APPROVAL_STATUS, 
-	    TO_CHAR(A.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
-	    A.EMPNO,
-	    A.APPROVAL_TITLE, 
-	    A.APPROVAL_CONTENT,
-	    TO_CHAR(NVL(A.APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE,
-	    A.UPDATE_DATE, 
-	    A.UPDATE_EMPNO,
-	    TO_CHAR(A.START_DATE,'YYYY-MM-DD') AS START_DATE,
-    	TO_CHAR(A.END_DATE,'YYYY-MM-DD') AS END_DATE,
-	    -- 결재라인 정보 추가
-	    AL.LINE_ID, 
-	    AL.SEQUENCE, 
-		e.NAME AS APPROVER_EMPNO, 
-	    AL.STATUS_ID, 
-	    AL.USE_YN,
-	    AL.SIGNATURE
+		SELECT
+			A.APPROVAL_ID,
+			A.FORM_ID,
+			A.APPROVAL_STATUS,
+			TO_CHAR(A.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
+			A.EMPNO,
+			A.APPROVAL_TITLE,
+			A.APPROVAL_CONTENT,
+			TO_CHAR(NVL(A.APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE,
+			A.UPDATE_DATE,
+			A.UPDATE_EMPNO,
+			TO_CHAR(A.START_DATE,'YYYY-MM-DD') AS START_DATE,
+			TO_CHAR(A.END_DATE,'YYYY-MM-DD') AS END_DATE,
+			-- 결재라인 정보 추가
+			AL.LINE_ID,
+			AL.SEQUENCE,
+			e.NAME AS APPROVER_EMPNO,
+			AL.STATUS_ID,
+			AL.USE_YN,
+			AL.SIGNATURE
 		FROM APPROVAL A
-		LEFT JOIN APPROVAL_LINE AL 
-		    ON A.APPROVAL_ID = AL.APPROVAL_ID
-		LEFT JOIN EMPLOYEES e ON e.EMPNO = AL.APPROVER_EMPNO
-		LEFT JOIN EMPLOYEES e2 ON A.EMPNO = e2.EMPNO
+				 LEFT JOIN APPROVAL_LINE AL
+						   ON A.APPROVAL_ID = AL.APPROVAL_ID
+				 LEFT JOIN EMPLOYEES e ON e.EMPNO = AL.APPROVER_EMPNO
+				 LEFT JOIN EMPLOYEES e2 ON A.EMPNO = e2.EMPNO
 		WHERE A.APPROVAL_ID = #{approval_id}
 	</select>
-	    
-    <!-- 결재문서 작성 -->
+
 	<!-- 결재문서 작성 -->
 	<insert id="insertApproval" parameterType="approvalDto">
 		<selectKey keyProperty="approval_id" resultType="String" order="BEFORE">
@@ -162,264 +145,317 @@
 		<if test="end_date != null"> , #{end_date} </if>
 		)
 	</insert>
-    
-    <insert id="insertApprovalTemp" parameterType="approvalDto">
-    	<selectKey keyProperty="approval_id" resultType="String" order="BEFORE">
-	    	SELECT (#{form_id}) ||
-			            ('DOC' || LPAD(NVL(MAX(SUBSTR(APPROVAL_ID, 9)), '0') + 1, 4, '0')) 
-		     FROM APPROVAL
-    	</selectKey>
-    	INSERT INTO APPROVAL ( APPROVAL_ID,
-    	                      EMPNO,
-    	                      APPROVAL_STATUS,
-    	                      TEMP_SAVE_YN,
-    	                      FORM_ID
-	 		<if test="approval_title != null and approval_title != '' ">
-	    	, APPROVAL_TITLE
-	    	</if>
-	    	<if test="approval_content != null and approval_content != '' ">
-	    	, APPROVAL_CONTENT  
-	    	</if>
-	    	<if test="approval_deadline != null and approval_deadline != '' ">
-	    	, APPROVAL_DEADLINE
-	    	</if>
-	    	<if test="start_date != null"> , START_DATE </if>
-	    	<if test="end_date != null"> , END_DATE </if>
-	    	)
-    	VALUES (
-		    #{approval_id},
-		    #{empno},
-		    'ST01',
-		    'Y', #{form_id}
-		    <if test="approval_title != null and approval_title != '' ">
-		    , #{approval_title} 
-		    </if>
-		    <if test="approval_content != null and approval_content != '' ">
-		    , #{approval_content} 
-		    </if>
-		    <if test="approval_deadline != null and approval_deadline != '' ">
-		    , #{approval_deadline}
-		    </if>
-		    <if test="start_date != null"> , #{start_date} </if>
-		    <if test="end_date != null"> , #{end_date} </if>
-		    )
-    </insert>
-    
-    <!-- 결재문서 업데이트 -->
-    <update id="updateApproval" parameterType="approvalDto">
-    	UPDATE APPROVAL 
+
+	<insert id="insertApprovalTemp" parameterType="approvalDto">
+		<selectKey keyProperty="approval_id" resultType="String" order="BEFORE">
+			SELECT (#{form_id}) ||
+			('DOC' || LPAD(NVL(MAX(SUBSTR(APPROVAL_ID, 9)), '0') + 1, 4, '0'))
+			FROM APPROVAL
+		</selectKey>
+		INSERT INTO APPROVAL ( APPROVAL_ID,
+		EMPNO,
+		APPROVAL_STATUS,
+		TEMP_SAVE_YN,
+		FORM_ID,
+		APPROVAL_URGENCY
+		<if test="approval_title != null and approval_title != '' ">
+			, APPROVAL_TITLE
+		</if>
+		<if test="approval_content != null and approval_content != '' ">
+			, APPROVAL_CONTENT
+		</if>
+		<if test="approval_deadline != null and approval_deadline != '' ">
+			, APPROVAL_DEADLINE
+		</if>
+		<if test="start_date != null"> , START_DATE </if>
+		<if test="end_date != null"> , END_DATE </if>
+		)
+		VALUES (
+		#{approval_id},
+		#{empno},
+		'ST01',
+		'Y',
+		#{form_id},
+		#{approval_urgency}
+		<if test="approval_title != null and approval_title != '' ">
+			, #{approval_title}
+		</if>
+		<if test="approval_content != null and approval_content != '' ">
+			, #{approval_content}
+		</if>
+		<if test="approval_deadline != null and approval_deadline != '' ">
+			, #{approval_deadline}
+		</if>
+		<if test="start_date != null"> , #{start_date} </if>
+		<if test="end_date != null"> , #{end_date} </if>
+		)
+	</insert>
+
+	<!-- 결재문서 업데이트 -->
+	<update id="updateApproval" parameterType="approvalDto">
+		UPDATE APPROVAL
 		SET UPDATE_DATE = CURRENT_DATE ,
-			APPROVAL_STATUS = 'ST01' ,
-			TEMP_SAVE_YN = 'Y'
-			<if test="form_id != null and form_id != '' ">
+		APPROVAL_STATUS = 'ST01' ,
+		TEMP_SAVE_YN = 'Y',
+		APPROVAL_URGENCY = #{approval_urgency}
+		<if test="form_id != null and form_id != '' ">
 			, FORM_ID = #{form_id}
-			</if>
-			<if test="approval_title != null and approval_title != '' ">
-		    , APPROVAL_TITLE = #{approval_title} 
-		    </if>
-	        <if test="approval_content != null and approval_content != '' ">
-	            , APPROVAL_CONTENT = #{approval_content}
-	        </if>
-	        <if test="approval_deadline != null and approval_deadline != '' ">
-	            , APPROVAL_DEADLINE = #{approval_deadline}
-	        </if>
-	        <if test="update_empno != null and update_empno != '' ">
-	            , UPDATE_EMPNO = #{update_empno}
-	        </if>
-	        <if test="start_date != null"> , START_DATE =  #{start_date} </if>
-		    <if test="end_date != null"> , END_DATE = #{end_date} </if>
-		WHERE APPROVAL_ID = #{approval_id}
-			AND APPROVAL_STATUS IN ('ST01', 'ST02')
-    </update>
-    
-    <!-- 결재문서 회수 -->
-    <update id="recallApproval">
-    	UPDATE APPROVAL 
-		SET TEMP_SAVE_YN = 'Y', APPROVAL_STATUS = 'ST01'
-		WHERE APPROVAL_ID = #{approval_id}
-			AND (SELECT COUNT(*)
-				FROM APPROVAL_LINE
-				WHERE APPROVAL_ID = #{approval_id}
-				AND STATUS_ID IN ('ST05','ST03','ST04')) = 0
+		</if>
+		<if test="approval_title != null and approval_title != '' ">
+			, APPROVAL_TITLE = #{approval_title}
+		</if>
+		<if test="approval_content != null and approval_content != '' ">
+			, APPROVAL_CONTENT = #{approval_content}
+		</if>
+		<if test="approval_deadline != null and approval_deadline != '' ">
+			, APPROVAL_DEADLINE = #{approval_deadline}
+		</if>
+		<if test="update_empno != null and update_empno != '' ">
+			, UPDATE_EMPNO = #{update_empno}
+		</if>
+		<if test="start_date != null"> , START_DATE =  #{start_date} </if>
+		<if test="end_date != null"> , END_DATE = #{end_date} </if>
+		WHERE APPROVAL_ID = #{approval_id} AND APPROVAL_STATUS IN ('ST01', 'ST02')
 	</update>
-	
+
+	<!-- 결재문서 회수 -->
+	<update id="recallApproval">
+		UPDATE APPROVAL
+		SET TEMP_SAVE_YN = 'Y', APPROVAL_STATUS = 'ST01'
+		WHERE APPROVAL_ID = #{approval_id} AND (SELECT COUNT(*)
+												FROM APPROVAL_LINE
+												WHERE APPROVAL_ID = #{approval_id}
+												  AND STATUS_ID IN ('ST05','ST03','ST04')) = 0
+	</update>
+
 	<!-- 임시저장 상태에서 결재요청 -->
 	<update id="approvalRequest">
 		UPDATE APPROVAL
 		SET TEMP_SAVE_YN = 'N', APPROVAL_STATUS = 'ST02'
 		WHERE APPROVAL_ID = #{approval_id}
 	</update>
-	
-     <!-- TODO 결재양식 트리 -->
-   <select id="formTree" resultType="map">
-   SELECT CATEGORY_ID AS "id" ,
-          CATEGORY_NAME AS "text",
-          '#' AS "parent"
-	    FROM APPROVAL_CATEGORY
+
+	<!-- TODO 결재양식 트리 -->
+	<select id="formTree" resultType="map">
+		SELECT CATEGORY_ID AS "id" , CATEGORY_NAME AS "text", '#' AS "parent"
+		FROM APPROVAL_CATEGORY
 		WHERE USE_YN = 'Y'
-	UNION ALL 
-	SELECT FORM_ID AS "id",
-	       FORM_NAME AS "text",
-	       CATEGORY_ID AS "parent"
+		UNION ALL
+		SELECT FORM_ID AS "id", FORM_NAME AS "text", CATEGORY_ID AS "parent"
 		FROM APPROVAL_FORM
 		WHERE USE_YN = 'Y'
-   </select> 
-   
-    <!-- TODO 결재요청함 selectApproval -->
-   <select id="selectApproval" resultType="approvalDto">
-   		SELECT APPROVAL_ID,
-   		       FORM_ID,
-   		       EMPNO,
-			<include refid="approvalStatusCase"/> || NVL(APPROVAL_TITLE,' ') AS APPROVAL_TITLE ,
-   		   <include refid="approvalStatusCase"/> AS APPROVAL_STATUS,
-	   		<include refid="dateFormat"/>,
-   		    TEMP_SAVE_YN
-   		FROM APPROVAL
-   		WHERE EMPNO = #{empno}
-   		AND USE_YN = 'Y'
-   		AND TEMP_SAVE_YN = 'N'
-   		AND APPROVAL_STATUS IN ('ST02','ST03')
-   </select>
-   
-   <select id="selectApprovalTemp" resultType="approvalDto">
-   		SELECT APPROVAL_ID, FORM_ID, EMPNO,
-	   <include refid="approvalStatusCase"/> || NVL(APPROVAL_TITLE,' ') AS APPROVAL_TITLE ,
-	   <include refid="approvalStatusCase"/> AS APPROVAL_STATUS,
-	   <include refid="dateFormat"/>,
-   			TEMP_SAVE_YN 
-   		FROM APPROVAL
-   		WHERE EMPNO = #{empno}
-   		    AND USE_YN = 'Y'
-   		    AND TEMP_SAVE_YN = 'Y'
-   		    AND APPROVAL_STATUS = 'ST01'
-   </select>
-   
-    <!-- 결재 대기함 -->
-    <select id="selectPendingApprovalDocuments" resultType="approvalDto">
-    	SELECT APPROVAL_ID, EMPNO , APPROVAL_TITLE,
-		<include refid="dateFormat"/>,
-			<include refid="approvalStatusCase"/> AS APPROVAL_STATUS
-			FROM APPROVAL
-			WHERE APPROVAL_ID IN (SELECT APPROVAL_ID
-					FROM APPROVAL_LINE al1
-					WHERE APPROVER_EMPNO  = #{empno}
-					AND STATUS_ID ='ST02'
-					AND (al1.SEQUENCE = '0' 
-							OR EXISTS (
-								SELECT 1 
-								FROM APPROVAL_LINE al2
-								WHERE al2.APPROVAL_ID  = al1.APPROVAL_ID
-								AND al2."SEQUENCE" = al1."SEQUENCE" -1
-								AND al2.STATUS_ID = 'ST04'
-							)
-						)
-					)
-			AND APPROVAL_STATUS != 'ST05'
+	</select>
+
+	<!-- TODO 결재요청함 selectApproval -->
+	<select id="selectApproval" resultType="approvalDto">
+		SELECT APPROVAL_ID, FORM_ID, EMPNO,
+			   CASE APPROVAL_STATUS
+				   WHEN 'ST01' THEN '[임시저장]'
+				   WHEN 'ST02' THEN '[결재대기]'
+				   WHEN 'ST03' THEN '[진행중]'
+				   WHEN 'ST04' THEN '[결재완료]'
+				   WHEN 'ST05' THEN '[결재반려]'
+				   END || NVL(APPROVAL_TITLE,' ') AS APPROVAL_TITLE , CASE APPROVAL_STATUS
+																		  WHEN 'ST01' THEN '임시저장'
+																		  WHEN 'ST02' THEN '결재대기'
+																		  WHEN 'ST03' THEN '진행중'
+																		  WHEN 'ST04' THEN '결재완료'
+																		  WHEN 'ST05' THEN '결재반려'
+				   END AS APPROVAL_STATUS,
+			   TO_CHAR(CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
+			   TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE,TEMP_SAVE_YN
+		FROM APPROVAL
+		WHERE EMPNO = #{empno} AND USE_YN = 'Y' AND TEMP_SAVE_YN = 'N' AND APPROVAL_STATUS IN ('ST02','ST03')
+	</select>
+
+	<select id="selectApprovalTemp" resultType="approvalDto">
+		SELECT APPROVAL_ID, FORM_ID, EMPNO,
+			   CASE APPROVAL_STATUS
+				   WHEN 'ST01' THEN '[임시저장]'
+				   WHEN 'ST02' THEN '[결재대기]'
+				   WHEN 'ST03' THEN '[진행중]'
+				   WHEN 'ST04' THEN '[결재완료]'
+				   WHEN 'ST05' THEN '[결재반려]'
+				   END || NVL(APPROVAL_TITLE,' ') AS APPROVAL_TITLE ,
+			   CASE APPROVAL_STATUS
+				   WHEN 'ST01' THEN '[임시저장]'
+				   WHEN 'ST02' THEN '[결재대기]'
+				   WHEN 'ST03' THEN '[진행중]'
+				   WHEN 'ST04' THEN '[결재완료]'
+				   WHEN 'ST05' THEN '[결재반려]'
+				   END AS APPROVAL_STATUS,
+			   TO_CHAR(CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
+			   TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE,
+			   TEMP_SAVE_YN
+		FROM APPROVAL
+		WHERE EMPNO = #{empno} AND USE_YN = 'Y' AND TEMP_SAVE_YN = 'Y' AND APPROVAL_STATUS = 'ST01'
+	</select>
+
+	<!-- 결재 대기함 -->
+	<select id="selectPendingApprovalDocuments" resultType="approvalDto">
+		SELECT APPROVAL_ID,
+			   EMPNO ,
+			   (SELECT NAME FROM EMPLOYEES WHERE EMPNO = a.EMPNO ) AS "name",
+			   APPROVAL_TITLE,
+			   TO_CHAR(CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE ,
+			   CASE APPROVAL_STATUS
+				   WHEN 'ST01' THEN '[임시저장]'
+				   WHEN 'ST02' THEN '[결재대기]'
+				   WHEN 'ST03' THEN '[진행중]'
+				   WHEN 'ST04' THEN '[결재완료]'
+				   WHEN 'ST05' THEN '[결재반려]'
+				   END AS APPROVAL_STATUS,
+			   COALESCE(TO_CHAR(APPROVAL_DEADLINE,'YYYY-MM-DD'),'-') AS APPROVAL_DEADLINE
+		FROM APPROVAL a
+		WHERE APPROVAL_ID IN (SELECT APPROVAL_ID
+							  FROM APPROVAL_LINE al1
+							  WHERE APPROVER_EMPNO  = #{empno}
+								AND STATUS_ID ='ST02'
+								AND (al1.SEQUENCE = '0'
+								  OR EXISTS (
+									  SELECT 1
+									  FROM APPROVAL_LINE al2
+									  WHERE al2.APPROVAL_ID  = al1.APPROVAL_ID
+										AND al2."SEQUENCE" = al1."SEQUENCE" -1
+										AND al2.STATUS_ID = 'ST04'
+								  )
+								  )
+		)
+		  AND APPROVAL_STATUS != 'ST05'
 			AND TEMP_SAVE_YN = 'N'
-    </select>
-    
-    <!-- 결재 진행함 -->
-    <select id="selectApprovalInProgress" resultType="approvalDto">
-    SELECT APPROVAL_ID ,
-           t2.NAME AS APPROVAL_CONTENT ,
-           APPROVAL_TITLE,
-			<include refid="approvalStatusCase"/> AS APPROVAL_STATUS,
-				TO_CHAR(t1.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
-   				TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE
-			FROM APPROVAL t1 JOIN EMPLOYEES t2 
-			ON t1.EMPNO = t2.EMPNO 
-			WHERE APPROVAL_ID IN (SELECT APPROVAL_ID
-					FROM APPROVAL_LINE 
-					WHERE APPROVER_EMPNO = #{empno}
-					AND STATUS_ID = 'ST04')
-			AND APPROVAL_STATUS = 'ST03'
-    </select>
-    
-    <!-- 완료문서함 -->
-    <select id="selectApprovalCompleted" resultType="approvalDto">
-   		SELECT APPROVAL_ID,
-   		       NVL(APPROVAL_TITLE,' ') AS APPROVAL_TITLE,
-   		       NAME AS APPROVAL_CONTENT,
-			<include refid="approvalStatusCase"/> AS APPROVAL_STATUS,
-				TO_CHAR(t1.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE, 
-   				TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE
+	</select>
+
+	<!-- 결재 진행함 -->
+	<select id="selectApprovalInProgress" resultType="approvalDto">
+		SELECT APPROVAL_ID , t2.NAME AS APPROVAL_CONTENT , APPROVAL_TITLE,
+			   CASE APPROVAL_STATUS
+				   WHEN 'ST01' THEN '[임시저장]'
+				   WHEN 'ST02' THEN '[결재대기]'
+				   WHEN 'ST03' THEN '[진행중]'
+				   WHEN 'ST04' THEN '[결재완료]'
+				   WHEN 'ST05' THEN '[결재반려]'
+				   END AS APPROVAL_STATUS,
+			   TO_CHAR(t1.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
+			   TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE
 		FROM APPROVAL t1 JOIN EMPLOYEES t2
-		ON t1.EMPNO = t2.EMPNO
+							  ON t1.EMPNO = t2.EMPNO
+		WHERE APPROVAL_ID IN (SELECT APPROVAL_ID
+							  FROM APPROVAL_LINE
+							  WHERE APPROVER_EMPNO = #{empno}
+								AND STATUS_ID = 'ST04')
+		  AND APPROVAL_STATUS = 'ST03'
+	</select>
+
+	<!-- 완료문서함 -->
+	<select id="selectApprovalCompleted" resultType="approvalDto">
+		SELECT APPROVAL_ID, NVL(APPROVAL_TITLE,' ') AS APPROVAL_TITLE, NAME AS APPROVAL_CONTENT,
+			   CASE APPROVAL_STATUS
+				   WHEN 'ST01' THEN '[임시저장]'
+				   WHEN 'ST02' THEN '[결재대기]'
+				   WHEN 'ST03' THEN '[진행중]'
+				   WHEN 'ST04' THEN '[결재완료]'
+				   WHEN 'ST05' THEN '[결재반려]'
+				   END AS APPROVAL_STATUS,
+			   TO_CHAR(t1.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
+			   TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE
+		FROM APPROVAL t1 JOIN EMPLOYEES t2
+							  ON t1.EMPNO = t2.EMPNO
 		WHERE APPROVAL_STATUS = 'ST04'
-    </select>
-    
-    <!-- 반려문서함 -->
-    <select id="selectApprovalRejected" resultType="approvalDto">
-    	SELECT 
-	    t1.APPROVAL_ID,
-		<include refid="approvalStatusCase"/> || NVL(t1.APPROVAL_TITLE, ' ') AS APPROVAL_TITLE,
-	    t2.NAME AS APPROVAL_CONTENT,
-		<include refid="approvalStatusCase"/> AS APPROVAL_STATUS,
-	    NVL(t3.REJECT_REASON,'-') AS "APPROVAL_DEADLINE",
-    	(SELECT NAME FROM EMPLOYEES WHERE EMPNO = t3.APPROVER_EMPNO) AS "CREATE_DATE"
-	    FROM APPROVAL t1
-			JOIN EMPLOYEES t2 ON t1.EMPNO = t2.EMPNO
-			JOIN APPROVAL_LINE t3 ON t1.APPROVAL_ID = t3.APPROVAL_ID
-			WHERE t1.APPROVAL_STATUS = 'ST05' 
-			AND t1.APPROVAL_ID IN (SELECT APPROVAL_ID
-					FROM APPROVAL_LINE 
-					WHERE APPROVER_EMPNO = #{empno}
-					AND t3.STATUS_ID = 'ST05')
-    </select>
-    
-    <!-- 내문서함 -->
-    <select id="selectApprovalMyDocuments" resultType="map">
-    	SELECT 
-		    t1.APPROVAL_ID, 
-		    t2.FORM_NAME AS FORM_ID, 
-		    t1.EMPNO, 
-		    NVL(APPROVAL_TITLE,'-') AS APPROVAL_TITLE,
-		    t3.CATEGORY_NAME ,
-			<include refid="approvalStatusCase"/> AS APPROVAL_STATUS,
-		    TO_CHAR(t1.CREATE_DATE, 'YYYY-MM-DD') AS CREATE_DATE, 
-		    COALESCE(TO_CHAR(t1.APPROVAL_DEADLINE, 'YYYY-MM-DD'), '-') AS APPROVAL_DEADLINE
-		FROM 
-		    APPROVAL t1 
-		JOIN 
-		    APPROVAL_FORM t2 ON t1.FORM_ID = t2.FORM_ID 
-		JOIN 
-			APPROVAL_CATEGORY t3 ON t2.CATEGORY_ID = t3.CATEGORY_ID 
-		WHERE 
-		    t1.EMPNO = #{empno}
-    </select>
-    
-    <!-- 참조문서함 -->
-    <select id="selectApprovalReference" resultType="map">
-   	 SELECT t1.APPROVAL_ID,
-   	        (SELECT NAME FROM EMPLOYEES WHERE EMPNO = t1.EMPNO) AS NAME ,
-   	        APPROVAL_TITLE,
-			<include refid="approvalStatusCase"/> AS APPROVAL_STATUS,
-			TO_CHAR(t1.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
-			TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE
-			FROM APPROVAL t1 
-			WHERE t1.APPROVAL_ID IN (SELECT APPROVAL_ID
-							FROM APPROVAL_REF
-							WHERE EMPNO = #{empno})
-    </select>
-    
-    <!-- 모든 결재자가 결재승인 하거나, 한명이라도 반려했을때 실행될 update -->
-    <update id="finalApprovalStatus">
-    	UPDATE APPROVAL
-    	SET APPROVAL_STATUS = #{status_id} 
-    	WHERE APPROVAL_ID = #{approval_id}
-    </update>
-    
-    <!-- 캘린더에 전달할 휴가 목록 -->
-    <select id="postLeaveToCalendar" resultType="map">
-    	SELECT t1.EMPNO, t2.NAME,
-    		TO_CHAR(START_DATE,'YYYY-MM-DD') START_DATE ,
-    		TO_CHAR(END_DATE,'YYYY-MM-DD') END_DATE
-			FROM APPROVAL t1
-			JOIN EMPLOYEES t2 ON t1.EMPNO = t2.EMPNO
-			WHERE t1.EMPNO = #{empno}
-			AND APPROVAL_STATUS = 'ST04'
-			AND FORM_ID LIKE 'BC%'
-    </select>
+	</select>
+
+	<!-- 반려문서함 -->
+	<select id="selectApprovalRejected" resultType="approvalDto">
+		SELECT
+			t1.APPROVAL_ID,
+			CASE t1.APPROVAL_STATUS
+				WHEN 'ST01' THEN '[임시저장] '
+				WHEN 'ST02' THEN '[결재대기] '
+				WHEN 'ST03' THEN '[진행중] '
+				WHEN 'ST04' THEN '[결재완료] '
+				WHEN 'ST05' THEN '[결재반려] '
+				ELSE ''
+				END || NVL(t1.APPROVAL_TITLE, ' ') AS APPROVAL_TITLE,
+			t2.NAME AS APPROVAL_CONTENT,
+			CASE t1.APPROVAL_STATUS
+				WHEN 'ST01' THEN '[임시저장]'
+				WHEN 'ST02' THEN '[결재대기]'
+				WHEN 'ST03' THEN '[진행중]'
+				WHEN 'ST04' THEN '[결재완료]'
+				WHEN 'ST05' THEN '[결재반려]'
+				ELSE ''
+				END AS APPROVAL_STATUS,
+			NVL(t3.REJECT_REASON,'-') AS "APPROVAL_DEADLINE",
+			TO_CHAR(t1.CREATE_DATE, 'YYYY-MM-DD') AS CREATE_DATE,
+			(SELECT NAME FROM EMPLOYEES WHERE EMPNO = t3.APPROVER_EMPNO) AS "REJECTEMPNAME"
+		FROM APPROVAL t1
+				 JOIN EMPLOYEES t2 ON t1.EMPNO = t2.EMPNO
+				 JOIN APPROVAL_LINE t3 ON t1.APPROVAL_ID = t3.APPROVAL_ID
+		WHERE t1.APPROVAL_STATUS = 'ST05'
+		  AND t1.APPROVAL_ID IN (SELECT APPROVAL_ID
+								 FROM APPROVAL_LINE
+								 WHERE APPROVER_EMPNO = #{empno} AND t3.STATUS_ID = 'ST05')
+	</select>
+
+	<!-- 내문서함 -->
+	<select id="selectApprovalMyDocuments" resultType="map">
+		SELECT
+			t1.APPROVAL_ID,
+			t2.FORM_NAME AS FORM_ID,
+			t1.EMPNO,
+			NVL(APPROVAL_TITLE,'-') AS APPROVAL_TITLE,
+			t3.CATEGORY_NAME ,
+			CASE t1.APPROVAL_STATUS
+				WHEN 'ST01' THEN '임시저장'
+				WHEN 'ST02' THEN '결재대기'
+				WHEN 'ST03' THEN '진행중'
+				WHEN 'ST04' THEN '결재완료'
+				WHEN 'ST05' THEN '결재반려'
+				END AS APPROVAL_STATUS,
+			TO_CHAR(t1.CREATE_DATE, 'YYYY-MM-DD') AS CREATE_DATE,
+			COALESCE(TO_CHAR(t1.APPROVAL_DEADLINE, 'YYYY-MM-DD'), '-') AS APPROVAL_DEADLINE
+		FROM
+			APPROVAL t1
+				JOIN
+			APPROVAL_FORM t2 ON t1.FORM_ID = t2.FORM_ID
+				JOIN
+			APPROVAL_CATEGORY t3 ON t2.CATEGORY_ID = t3.CATEGORY_ID
+		WHERE
+			t1.EMPNO = #{empno}
+	</select>
+
+	<!-- 참조문서함 -->
+	<select id="selectApprovalReference" resultType="map">
+		SELECT t1.APPROVAL_ID, (SELECT NAME FROM EMPLOYEES WHERE EMPNO = t1.EMPNO) AS NAME ,APPROVAL_TITLE,
+			   CASE t1.APPROVAL_STATUS
+				   WHEN 'ST01' THEN '임시저장'
+				   WHEN 'ST02' THEN '결재대기'
+				   WHEN 'ST03' THEN '진행중'
+				   WHEN 'ST04' THEN '결재완료'
+				   WHEN 'ST05' THEN '결재반려'
+				   END AS APPROVAL_STATUS,
+			   TO_CHAR(t1.CREATE_DATE,'YYYY-MM-DD') AS CREATE_DATE,
+			   TO_CHAR(NVL(APPROVAL_DEADLINE,CURRENT_TIMESTAMP),'YYYY-MM-DD') AS APPROVAL_DEADLINE
+		FROM APPROVAL t1
+		WHERE t1.APPROVAL_ID IN (SELECT APPROVAL_ID FROM APPROVAL_REF WHERE EMPNO = #{empno})
+	</select>
+
+	<!-- 모든 결재자가 결재승인 하거나, 한명이라도 반려했을때 실행될 update -->
+	<update id="finalApprovalStatus">
+		UPDATE APPROVAL
+		SET APPROVAL_STATUS = #{status_id}
+		WHERE APPROVAL_ID = #{approval_id}
+	</update>
+
+	<!-- 캘린더에 전달할 휴가 목록 -->
+	<select id="postLeaveToCalendar" resultType="map">
+		SELECT t1.EMPNO, t2.NAME,
+			   TO_CHAR(START_DATE,'YYYY-MM-DD') START_DATE , TO_CHAR(END_DATE,'YYYY-MM-DD') END_DATE
+		FROM APPROVAL t1
+				 JOIN EMPLOYEES t2 ON t1.EMPNO = t2.EMPNO
+		WHERE t1.EMPNO = #{empno}
+		  AND APPROVAL_STATUS = 'ST04'
+		  AND FORM_ID LIKE 'BC%'
+	</select>
 	<!-- 참조자 등록 -->
 	<insert id="insertApprovalReferences" parameterType="map">
 		INSERT INTO APPROVAL_REF(ref_id, approval_id, empno)
@@ -438,5 +474,64 @@
 		</choose>
 		) A
 	</insert>
-	    
+
+	<select id="selectApprovalLineStats" parameterType="String" resultType="map">
+		SELECT
+			NVL(SUM(CASE
+						WHEN a.APPROVAL_ID IN (
+							SELECT APPROVAL_ID
+							FROM APPROVAL_LINE
+							WHERE APPROVER_EMPNO = #{empNo}
+							  AND STATUS_ID = 'ST04'
+						) AND a.APPROVAL_STATUS = 'ST03'
+							THEN 1 ELSE 0 END), 0) AS PRE,
+			NVL(SUM(CASE
+						WHEN a.APPROVAL_ID IN (
+							SELECT APPROVAL_ID
+							FROM APPROVAL_LINE al1
+							WHERE al1.APPROVER_EMPNO = #{empNo}
+							  AND al1.STATUS_ID = 'ST02'
+							  AND (al1.SEQUENCE = '0'
+								OR EXISTS (
+									SELECT 1
+									FROM APPROVAL_LINE al2
+									WHERE al2.APPROVAL_ID = al1.APPROVAL_ID
+									  AND al2.SEQUENCE = al1.SEQUENCE - 1
+									  AND al2.STATUS_ID = 'ST04'
+								)
+								)
+						)
+							AND a.APPROVAL_STATUS != 'ST05'
+						AND a.TEMP_SAVE_YN = 'N'
+					THEN 1 ELSE 0 END), 0) AS WAIT,
+			NVL(SUM(CASE
+						WHEN a.APPROVAL_STATUS = 'ST05'
+							AND a.APPROVAL_ID IN (
+								SELECT APPROVAL_ID
+								FROM APPROVAL_LINE
+								WHERE APPROVER_EMPNO = #{empNo} AND STATUS_ID = 'ST05'
+							)
+							THEN 1 ELSE 0 END), 0) AS REJECTED,
+			NVL(SUM(CASE
+						WHEN a.APPROVAL_ID IN (
+							SELECT APPROVAL_ID
+							FROM APPROVAL_LINE
+							WHERE APPROVER_EMPNO = #{empNo}
+							  AND STATUS_ID = 'ST04'
+						)
+							AND a.APPROVAL_STATUS = 'ST04'
+							THEN 1 ELSE 0 END), 0) AS COMPLETED
+		FROM APPROVAL a
+		WHERE a.CREATE_DATE >= CURRENT_DATE - 3
+	</select>
+
+	<select id="selectApprovalStats" parameterType="String" resultType="map">
+		SELECT
+			NVL(COUNT(CASE WHEN APPROVAL_STATUS = 'ST02' THEN 1 END),'0') AS WAIT,
+			NVL(COUNT(CASE WHEN APPROVAL_STATUS = 'ST03' THEN 1 END),'0') AS PRE,
+			NVL(COUNT(CASE WHEN APPROVAL_STATUS = 'ST04' THEN 1 END),'0') AS COMPLETED,
+			NVL(COUNT(CASE WHEN APPROVAL_STATUS = 'ST05' THEN 1 END),'0') AS REJECTED
+		FROM APPROVAL
+		WHERE EMPNO = #{empNo}
+	</select>
 </mapper>

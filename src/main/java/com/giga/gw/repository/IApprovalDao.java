@@ -1,10 +1,10 @@
 package com.giga.gw.repository;
 
-import java.util.List;
-import java.util.Map;
-
 import com.giga.gw.dto.ApprovalDto;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
+import java.util.Map;
 
 @Mapper
 public interface IApprovalDao {
@@ -38,4 +38,6 @@ public interface IApprovalDao {
     List<Map<String, Object>> postLeaveToCalendar(String empno);
     
     int insertApprovalReferences(Map<String, Object> references);
+    Map<String, Object> selectApprovalLineStats (String empno);
+    Map<String, Object> selectApprovalStats (String empno);
 }

@@ -7,11 +7,11 @@
 <meta charset="UTF-8">
 <title>결재문서 상세</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 </head> 
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
 		<div id="content">
@@ -41,7 +41,7 @@
 		function recall(){
 			let id = document.querySelector(".content_title").textContent;
 			console.log(id);
-			fetch("./approvalRecall.json",{
+			fetch("./approvalRecallAjax.do",{
 				method:"POST",
 				headers:{
 					"Content-Type":"plain/text"
@@ -63,7 +63,7 @@
 		
 		function approvalBtn(){
 			let approval_id = document.querySelector(".content_title").textContent;
-			fetch("./approvalRequest.json",{
+			fetch("./approvalRequestAjax.do",{
 				method:"POST",
 				headers:{
 					"Content-Type":"application/json"

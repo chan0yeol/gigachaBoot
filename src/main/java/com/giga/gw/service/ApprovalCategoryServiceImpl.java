@@ -1,14 +1,13 @@
 package com.giga.gw.service;
 
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.giga.gw.dto.ApprovalCategoryDto;
 import com.giga.gw.repository.IApprovalCategoryDao;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +34,14 @@ public class ApprovalCategoryServiceImpl implements IApprovalCategoryService{
 	public int categoryCheck(String category_yname) {
 		return approvalCategoryDao.categoryCheck(category_yname);
 	}
-	
+
+	@Override
+	public boolean categoryUpdateUseYN(Map<String, Object> map) {
+		return approvalCategoryDao.categoryUpdateUseYN(map) == 1;
+	}
+
+	@Override
+	public List<ApprovalCategoryDto> categorySelectAll() {
+		return approvalCategoryDao.categorySelectAll();
+	}
 }

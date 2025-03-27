@@ -47,15 +47,15 @@
 	    formData.append("approval_content", editor.getData());
 	    console.log([...formData]);
 	    
-//	    let response = await fetch("./approvalDocumentSave.json", {
+//	    let response = await fetch("./approvalDocumentSaveAjax.do", {
 //			method:'POST',
 //			body:formData
 //		})
 //		if(!response.ok) throw new Error ("저장실패");
 		console.log(formData.get("approval_deadline"));
 		
-		let data = await approvalDocumentSave('./approvalDocumentSave.json',formData);
-// 		let data = await approvalDocumentSave('./approvalDocumentSaveReg.json',formData);
+		let data = await approvalDocumentSave('./approvalDocumentSaveAjax.do',formData);
+// 		let data = await approvalDocumentSave('./approvalDocumentSaveRegAjax.do',formData);
 		if(data == true){
             Swal.fire({
 		        title: "작성 성공!",
@@ -74,7 +74,7 @@
 		    });
         }
 		
-//        let data = await approvalDocumentSave('./approvalDocumentSave.json',jsonData);
+//        let data = await approvalDocumentSave('./approvalDocumentSaveAjax.do',jsonData);
         
 //		
 	});
@@ -113,21 +113,23 @@
 			 return;
 		}
 		
-        let data = await fetchJsonPost('./approvalDocumentSaveTemp.json',jsonData);
+        let data = await fetchJsonPost('./approvalDocumentSaveTempAjax.do',jsonData);
         if(data == true){
-            Swal.fire("작성성공");
+            Swal.fire("작성성공").then(()=> {
+				location.href='./approvalListTemp.do'
+			});
         } else{
             Swal.fire("작성실패");
         }
 	})
 
-	document.querySelector("#getContent").addEventListener('click',() => {
-		$(".ck-editor").hide();
-		$("#fileDiv").show();
-		let contentDiv = document.querySelector("#editor")
-		contentDiv.style.display = 'block';
-		contentDiv.innerHTML = editor.getData();
-		let content = document.querySelector("#contentHtml");
-		document.querySelector(".modal-body").innerHTML = content.innerHTML;
-	});
+//	document.querySelector("#getContent").addEventListener('click',() => {
+//		$(".ck-editor").hide();
+//		$("#fileDiv").show();
+//		let contentDiv = document.querySelector("#editor")
+//		contentDiv.style.display = 'block';
+//		contentDiv.innerHTML = editor.getData();
+//		let content = document.querySelector("#contentHtml");
+//		document.querySelector(".modal-body").innerHTML = content.innerHTML;
+//	});
 	

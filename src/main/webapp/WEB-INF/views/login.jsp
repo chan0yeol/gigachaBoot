@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>로그인</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <style type="text/css">
 #content {
 	margin-right: 30px;
@@ -162,44 +162,6 @@
 		        $("#empnoResult").text(""); // 결과 메시지 초기화
 		    });
 	
-	
-
-
-// 	$("#findBtn").on("click", function(event) {
-// 	    console.log("🔍 버튼 클릭됨! findEmpno 실행!");
-// 	    event.preventDefault();
-// 	    findEmpno();
-// 	});
-
-// 	function findEmpno() {
-// 	    console.log("📢 findEmpno 함수 실행됨!");
-
-// 	    var name = document.getElementById('name').value;
-// 	    var email = document.getElementById('email').value;
-
-// 	    console.log("✅ 입력된 이름:", name);
-// 	    console.log("✅ 입력된 이메일:", email);
-
-// 	    $.ajax({
-// 	        url: "/findEmpno.do",
-// 	        type: "POST",
-// 	        contentType: "application/x-www-form-urlencoded; charset=UTF-8",
-// 	        data: { "name": name, "email": email },
-// 	        success: function(data) {
-// 	            console.log("🎉 성공 응답:", data);
-// 	            if (data && data.empno) {
-// 	                $('#info').text("사원번호는 [" + data.empno + "]입니다.");
-// 	            } else {
-// 	                $('#info').text("사원번호를 찾을 수 없습니다.");
-// 	            }
-// 	        },
-// 	        error: function(err) {
-// 	            console.log("🚨 에러 발생:", err);
-// 	            alert("관리자에게 문의하세요.");
-// 	        }
-// 	    });
-// 	}
-
 	</script>
 </body>
 
