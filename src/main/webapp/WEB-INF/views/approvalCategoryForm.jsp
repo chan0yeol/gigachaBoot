@@ -6,36 +6,45 @@
 <meta charset="UTF-8">
 <title>문서양식 카테고리 등록</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 </head>
 <body>
-	<%@ include file="layout/newNav.jsp"%>
-	<%@ include file="layout/newSide.jsp"%>
+	<%@ include file="./layout/newNav.jsp"%>
+	<%@ include file="./layout/newSide.jsp"%>
 <main id="main" class="main">
 	<div class="row">
 		<div id="content">
-			<h3 class="content_title">문서양식 카테고리 등록</h3>
+			<div class="pagetitle">
+				<h1>카테고리 등록</h1>
+				<nav>
+					<ol class="breadcrumb">
+						<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}">Home</a></li>
+						<li class="breadcrumb-item">문서양식관리</li>
+						<li class="breadcrumb-item active">카테고리 등록</li>
+					</ol>
+				</nav>
+			</div>
 				<div class="col">
 					<div class="card">
 						<div class="card-body">
 							<h5 class="card-title">카테고리 등록</h5>
 							<form>
 								<div class="mb-3">
-									<label class="col-form-label">카테고리이름</label>
+									<label for="inputEmail3" class="col-form-label">카테고리이름</label>
 									<div>
 										<input type="text" class="form-control" name="category_name" placeholder="이름을 입력하세요">
 									</div>
 								</div>
 								<div class="mb-3">
-									<label class="col-form-label">카테고리약어</label>
+									<label for="inputEmail3" class="col-form-label">카테고리약어</label>
 									<div>
 										<input type="text" class="form-control" name="category_yname" placeholder="ex) HR">
 									</div>
 								</div>
 								<div class="text-center">
-									<button type="submit" class="btn btn-primary">Submit</button>
-									<button type="reset" class="btn btn-secondary">Reset</button>
-									<button type="button" class="btn btn-info" onclick="history.back()">cancle</button>
+									<button type="submit" class="btn btn-primary">등록</button>
+									<button type="reset" class="btn btn-secondary">초기화</button>
+									<button type="button" class="btn btn-info" onclick="history.back()">뒤로가기</button>
 								</div>
 							</form>
 	
@@ -83,7 +92,7 @@
 					return;
 				}
 				
-				fetch('./categoryCheck.json?yname='+yname)
+				fetch('./managerCategoryCheckAjax.do?yname='+yname)
 				.then(resp => resp.json())
 				.then(data => {
 					if(data === false){
@@ -95,7 +104,7 @@
 						formData.forEach((value, key) => {
 							jsonData[key] = value;
 						});
-						fetch("./categorySave.json",{
+						fetch("./managerCategorySaveAjax.do",{
 							method:'post',
 							headers:{
 								'Content-Type':'application/json'
@@ -105,8 +114,8 @@
 						.then(resp => resp.json())
 						.then(data => {
 							if(data === true) {
-								Swal.fire("가입 성공").then(()=>{
-									location.href = '${pageContext.request.contextPath}/approval/category.do';
+								Swal.fire("성공").then(()=>{
+									location.href = '${pageContext.request.contextPath}/approval/managerCategoryList.do';
 								})
 								
 							}

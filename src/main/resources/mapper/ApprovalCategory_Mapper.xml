@@ -3,13 +3,26 @@
 <mapper namespace="com.giga.gw.repository.IApprovalCategoryDao">
   <insert id="categoryInsert" parameterType="approvalCategoryDto">
   	INSERT INTO APPROVAL_CATEGORY(CATEGORY_ID,CATEGORY_NAME,CATEGORY_YNAME)
-	VALUES('CATE' || LPAD(CATEGORY_SEQ.NEXTVAL, 2, '0'), #{category_name}, #{category_yname})
+	VALUES(
+<!-- 	'CATE' || LPAD(CATEGORY_SEQ.NEXTVAL, 2, '0'), -->
+	'CATE' || LPAD(
+        NVL(
+            (SELECT MAX(TO_NUMBER(SUBSTR(CATEGORY_ID, 5, 2))) FROM APPROVAL_CATEGORY), 
+            -1
+        ) + 1, 
+        2, '0'
+    ),
+	 #{category_name}, #{category_yname})
   </insert>
   <select id="categorySelect" resultType="approvalCategoryDto">
-  SELECT CATEGORY_ID ,CATEGORY_NAME,CATEGORY_YNAME , CREATE_DATE,UPDATE_DATE 
+   SELECT CATEGORY_ID ,CATEGORY_NAME,CATEGORY_YNAME , CREATE_DATE, UPDATE_DATE, USE_YN
   	FROM APPROVAL_CATEGORY
   	WHERE USE_YN = 'Y'
-  </select>  
+  </select>
+  <select id="categorySelectAll" resultType="approvalCategoryDto">
+   SELECT CATEGORY_ID ,CATEGORY_NAME,CATEGORY_YNAME , CREATE_DATE, UPDATE_DATE, USE_YN
+  	FROM APPROVAL_CATEGORY
+  </select>    
   <select id="categorySelectById" resultType="approvalCategoryDto">
   	SELECT CATEGORY_ID, CATEGORY_NAME, CATEGORY_YNAME, CREATE_DATE 
 	  	FROM APPROVAL_CATEGORY 
@@ -20,4 +33,9 @@
 	  	FROM APPROVAL_CATEGORY 
 	  	WHERE CATEGORY_YNAME = #{category_yname}
   </select>
+  <update id="categoryUpdateUseYN">
+  	UPDATE APPROVAL_CATEGORY 
+	SET USE_YN = #{use_yn}
+	WHERE APPROVAL_CATEGORY.CATEGORY_ID = #{id}
+  </update>
 </mapper>

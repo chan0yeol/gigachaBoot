@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>회의실 등록 폼</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <!-- jQuery UI CSS -->
 <link rel="stylesheet"
 	href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -103,8 +103,8 @@
 </style>
 </head>
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div id="content">
 		<h3 class="content_title">회의실 등록</h3>
@@ -167,120 +167,7 @@
 	 function registerRoom() {
          let formData = new FormData(document.forms[0]);   
      }
-	 
-// 	  document.getElementById("roomImage").addEventListener("change", function (event) {
-// 	        const file = event.target.files[0];
-// 	        if (file) {
-// 	            const reader = new FileReader();
-// 	            reader.onload = function (e) {
-// 	                document.getElementById("imagePreview").src = e.target.result;
-// 	                document.getElementById("imagePreview").style.display = "block";
-// 	                document.getElementById("imagePreviewText").style.display = "none";
-// 	            };
-// 	            reader.readAsDataURL(file);
-// 	        }
-// 	    });
-	 
-// 	 document.addEventListener('DOMContentLoaded', function(){
-// 		 //파일 업로드 기능
-// 		 const uploadBtn = document.getElementById('uploadBtn');
-// 		 const fileInput = document.getElementById('roomImage');
-// 		 const preview = document.getElementById('preview');
-// 		 const previewText = document.getElementById('previewText');
-		 
-// 		 uploadBtn.addEventListener('click', function(){
-// 			fileInput.click(); 
-// 		 });
-		 
-// 		 fileInput.addEventListener('change', function(){
-// 			 const file = this.file[0];
-// 			 if(file){
-// 				 const reader = new FileReader();
-// 				 reader.onload = function(event){
-// 					 preview.src = event.target.result;
-// 					 preview.style.display = 'block';
-// 					 previewText.style.display = 'none';
-// 				 };
-// 				 reader.readAsDataURL(file);
-// 			 }
-// 		 });
-		 
-// // 		 //폼 제출
-// 		 const roomForm = document.getElementById('roomForm');
-// 		 roomForm.addEventListener('submit', function(event){
-// 			 event.preventDefault();
-			 
-// 			 const formData = new FormData(this);
-			 
-// 			 //AJAX로 서버 전송
-// 			 fetch('./insertRoom.do', {
-// 				 method: 'POST',
-// 				 body: formData
-// 			 })
-// 			 .then(response => response.json())
-// 			 .then(data => {
-// 				 if(data.success){
-// 					 alert('회의실이 등록되었습니다.');
-// 					 location.reload();
-// 				 }else{
-// 					 alert('회의실 등록이 실패했습니다.');
-// 				 }
-// 			 })
-// 			 .catch(error => {
-// 				 console.log('Error:', error);
-// 				 alert('오류가 발생했습니다.');
-// 			 });
-			 
-// 			 const room_name = formData.get('room_name');
-// 			 const room_name = formData.get('capacity');
-// 			 const image_url = formData.get('image_url');
-			 
-// 			 const rooms = JSON.parse(localStorage.getItem('meetingRooms') || '[]');
-// 			 const image_url = ''; //실제 서버에서 반환된 url
-			 
-// 			 rooms.push({
-// 				room_id: Date.now().toString(),
-// 				room_name: room_name,
-// 				capacity: capacity,
-// 				image_url: image_url
-// 			 });
-// 			 localStorage.setItem('meetingRooms', JSON.stringify(rooms));
-			 
-// 			 //폼 초기화
-// 			 roomForm.reset();
-// 			 preview.style.display = 'none';
-// 			 previewText.style.display = 'block';
-			 
-// 			 alert('회의실이 등록되었습니다.');
-// 			 location.reload();
-// 			}
-// 	 	});
-		 
-// 		 //회의실 목록 로드 함수
-// 		 function loadRoomList(){
-// 			 const roomList = document.querySelector('.room_List');
-			 
-// 			 fetch('./roomList.do')
-// 			 .then(response => response.json())
-// 			 .then(data => {
-// 				 renderRooList(data);
-// 			 })
-// 			 .catch(error => {
-// 				 console.log('Error:', error);
-// 			 });
-// // 			 const rooms = JSON.parse(localStorage.getItem('meetingRooms') || '[]');
-// // 				renderRoomList(rooms);
-// 		 }
-		 
-// 		// 회의실 목록 렌더링 함수
-// 		function renderRoomList(rooms){
-// 			const roomList = document.querySelector('.room_List');
-// 			roomList.innerHTML = '';
-// 		}
-		 
-		 
-		 
-		 
+ 
 		 
 	</script>
 </body>

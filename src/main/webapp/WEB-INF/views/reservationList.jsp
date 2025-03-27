@@ -9,11 +9,11 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 </head> 
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
 		<div id="content" class="col-10">
@@ -33,21 +33,38 @@
 							<tbody>
 								<c:forEach items="${reservationList}" var="reservation">
 									<tr>
-										<td scope="col">${reservation.room_id}</td>
+										<td scope="col">${reservation.reservation_id}</td>
 										<td scope="col">${reservation.room_name}</td>
 										<td scope="col">${reservation.reservation_date}</td>
 										<td scope="col">${reservation.reservation_time}</td>
 										<td scope="col">${reservation.purpose}</td>
 										<td scope="col">
-<%-- 											<div class="${room.use_yn eq 'Y' ? 'switch on':'switch'}"> --%>
-<!-- 												<div class="slider"></div> -->
-<!-- 											</div> -->
-										</td>
-										<td>
-											<button type="button" name="delBtn" class="btn btn-danger" onclick="deleteRev('${reservation.reservation_id}')">취소</button>
+										<c:if test="${not empty sessionScope.loginDto}">
+										 <!-- 예약이 존재하는지 확인 -->
+    									  <c:if test="${not empty reservation}">
+											<c:if test="${sessionScope.loginDto.auth eq 'A'}">
+														관리자
+													<button class="btn btn-danger" onclick="deleteRev('${reservation.reservation_id}')">
+														취소
+													</button>
+											</c:if>
+											<c:if test="${reservation.reserver ne null && reservation.reserver eq sessionScope.loginDto.empno}">
+													예약자
+												<button class="btn btn-danger" onclick="deleteRev('${reservation.reservation_id}')">
+													취소
+												</button>
+											</c:if>
+											<c:if test="${reservation.reserver ne sessionScope.loginDto.empno && sessionScope.loginDto.auth ne 'A'}">
+        											참여자
+											</c:if>
+										  </c:if>
+										</c:if>		
 										</td>
 									</tr>
 								</c:forEach>
+
+
+
 							</tbody>
 						</table>
 					</div>
@@ -58,23 +75,31 @@
 
 	<script>
 	function deleteRev(reservation_id){
-// 		if (confirm("정말 취소하시겠습니까?")) {
-// 			 $.ajax({
-// 	                url: './delReservation.do',  // 권한 확인을 위한 URL
-// 	                type: 'GET',
-// 	                data: { reservation_id: reservation_id }, // 예약 ID를 서버로 전송
-// 	                success: function(response) {
-// 	                	if (response.alertMessage) {
-// 	                        alert(response.alertMessage);  // 응답에 따라 알림 띄우기
-// 	                    }
-// 	                },
-// 	                error: function() {
-		location.href="./delReservation.do?reservation_id="+reservation_id;
-// 	                	 alert("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
-// 	                }
-// 	            });
-// 	        }
+	    if (confirm("정말 취소하시겠습니까?")) {
+	        $.ajax({
+	            url: './delReservation.do',
+	            type: 'GET',
+	            data: { reservation_id: reservation_id },
+	            dataType: 'json', // 명시적으로 JSON 응답을 기대함
+	            success: function(response) {
+	                console.log("서버 응답:", response); // 서버 응답 확인
+	                
+	                if (response.Message) {
+	                    alert(response.Message);
+	                    location.reload(); // 성공했을 때만 페이지 새로고침
+	                } else if (response.errorMessage) {
+	                    alert(response.errorMessage);
+	                } else {
+	                    alert("알 수 없는 응답입니다.");
+	                    console.log("알 수 없는 응답:", response);
+	                }
+	            },
+	            error: function() {
+	                alert("서버 오류가 발생했습니다. 나중에 다시 시도해주세요.");
+	            }
+	        });
 	    }
+	}
 	
 	</script>
 </body>

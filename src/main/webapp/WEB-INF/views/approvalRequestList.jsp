@@ -5,41 +5,51 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>결재목록함</title>
+<title>결재대기함</title>
 
-<%@ include file="layout/header.jsp"%>
-<!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script> -->
-<!-- <script type="text/javascript" src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script> -->
-<!-- <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css"/> -->
+<%@ include file="./layout/header.jsp"%>
 
 <style type="text/css">
 .modal-content{
 	width: 220mm;
-/*     height: 307mm; */
 }
 </style>
 </head> 
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
 		<div id="content" class="col">
-			<h3 class="content_title">결재목록함</h3>
-			<table id="documentsTable"
-				class="display nowrap dataTable dtr-inline collapsed"
-				style="width: 100%;">
-				<thead>
-					<tr>
-						<th>문서번호</th>
-						<th>작성자</th>
-						<th>제목</th>
-						<th>상태</th>
-						<th>작성일</th>
-						<th>마감기한</th>
-					</tr>
-				</thead>
-			</table>
+				<div class="pagetitle">
+					<h1>결재대기함</h1>
+					<nav>
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="${pageContext.request.contextPath}">Home</a></li>
+							<li class="breadcrumb-item">전자결재</li>
+							<li class="breadcrumb-item">결재</li>
+							<li class="breadcrumb-item active">결재대기함</li>
+						</ol>
+					</nav>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<table id="documentsTable"
+							class="display nowrap dataTable dtr-inline collapsed"
+							style="width: 100%;">
+							<thead>
+								<tr>
+									<th>문서번호</th>
+									<th>작성자</th>
+									<th>제목</th>
+									<th>상태</th>
+									<th>작성일</th>
+									<th>마감기한</th>
+								</tr>
+							</thead>
+						</table>
+					</div>
+				</div>
 		</div>
 	</div>
 </main>
@@ -202,7 +212,7 @@
 		var table = $('#documentsTable').DataTable({
 			// 샘플 데이터
 	        ajax: {
-	            url: './approvalRequestList.json',
+	            url: './approvalRequestListAjax.do',
 	            method:'get',
 	            dataType: 'json',
 	            dataSrc: function(json) {
@@ -212,89 +222,55 @@
 	        },
 	        columns: [
 	            { data: 'approval_id' },
-	            { data: 'empno' },
+	            { data: 'name' },
 	            { data: 'approval_title' },
 	            { data: 'approval_status' },
 	            { data: 'create_date' },
 	            { data: 'approval_deadline' }
 	        ],
+	        columnDefs: [
+	            { orderable: false, targets: [0,1,2,3] }  // 특정 컬럼(2번째, 4번째)의 정렬 비활성화
+	        ],
 	        // 행 선택
 	        lengthMenu: [10, 20, 30],
+	        order: [[4, 'desc']],
+	        autoWidth: false,    
+	        responsive: true,
 	        search: {
 	            return: true
 	        },
+	        scrollX: true ,
+	        language: {
+	            "decimal": "",
+	            "emptyTable": "데이터가 없습니다.",
+	            "info": "총 _TOTAL_건 중 _START_부터 _END_까지 표시",
+	            "infoEmpty": "총 0건 중 0부터 0까지 표시",
+	            "infoFiltered": "(_MAX_건의 데이터에서 필터링됨)",
+	            "infoPostFix": "",
+	            "thousands": ",",
+	            "lengthMenu": "_MENU_ 개씩 보기",
+	            "loadingRecords": "로딩 중...",
+	            "processing": "처리 중...",
+	            "search": "검색:",
+	            "zeroRecords": "일치하는 데이터가 없습니다.",
+	            "paginate": {
+	            	"first": "<<",
+	                "last": ">>",
+	                "next": ">",
+	                "previous": "<"
+	            },
+	            "aria": {
+	                "sortAscending": ": 오름차순 정렬",
+	                "sortDescending": ": 내림차순 정렬"
+	            }
+	        },
 	        rowCallback: function(row, data) {
 	            $(row).find('td:first').on('click', async function() {
-// 	            	console.log(data.approval_id);
-// 					let data1 = await getDetail(data.approval_id);
-// 					console.log(data1);
-// 					if(!data1.form_id.startsWith('BC')){
-// 						$("#dateRange").hide();
-// 					}else {
-// 		                $("#dateRange").show();
-// 		            }
-// 					$("#approval_id").text(data1.approval_id); // 결재 문서 ID
-// 		            $("#form_id").text(data1.form_id); // 양식 ID
-// 		            $("#approval_status").text(data1.approval_status); // 결재 상태
-// 		            $("#approval_title").text(data1.approval_title); // 제목
-// 		            $("#approval_content").html(data1.approval_content); // 본문 (HTML이므로 .html() 사용)
-// 		            $("#approval_deadline").text(data1.approval_deadline); // 마감 기한
-// 		            $("#create_date").text(data1.create_date); // 생성 날짜
-// 		            $("#update_date").text(data1.update_date); // 수정 날짜
-// 		            $("#start_date").text(data1.start_date); // 시작 날짜
-// 		            $("#end_date").text(data1.end_date); // 종료 날짜
-// 		            $("#empno").text(data1.empno); // 작성자 사번
-// 		            $("#update_empno").text(data1.update_empno); // 수정한 사번
-// 					$("#modal-content").html(data1.approval_content);
-// //						$(".modal-body").html(data.approval_content);
-// 					 let html = "<div class='approval-item'>결<br>재</div>";
-// 					 data1.approvalLineDtos.forEach((emp, i) => {
-// 			                console.log(emp.name, emp.approver_empno);
-// 			                html += "<div class='approval-item'>";
-// 			                html += "<div id='" + emp.approver_empno + "' class='text-center'>" + emp.approver_empno + "</div>";
-// 			                html += "</div>";
-// 			            });
-
-// // 			            document.getElementById("approvalLine").innerHTML = ;
-// 			        $("#approvalLine").html(html)
-// 					$("#rejectBtn").val(data1.approval_id);	
-// 					$("#acceptBtn").val(data1.approval_id);
-// 					let fileData = await getFile(data1.approval_id);
-// 					console.log(fileData);
-// 					let fileHtml = '';
-// 					fileData.forEach((file, i) => {
-// 						console.log(file.origin_name);
-// 						fileHtml += '<li>'+file.origin_name+'<button class="btn btn-sm btn-success" value="'+file.file_id+'" onclick="download(this)">다운로드</button> </li>'
-// 					});
-// 					$("#fileUl").html(fileHtml);
-					
 					let data1 = await getDetail(data.approval_id);
                     let fileData = await getFile(data1.approval_id);
 					
                     console.log("결재 상세 데이터:", data1);
                     console.log("첨부 파일 데이터:", fileData);
-                    
-                    
-//                     let source = $("#approval-template").html();
-//                     let template = Handlebars.compile(source);
-					
-//                     let context = {
-//                         approval_id: data1.approval_id,
-//                         form_id: data1.form_id,
-//                         approval_status: data1.approval_status,
-//                         approval_title: data1.approval_title,
-//                         approval_content: data1.approval_content,
-//                         approval_deadline: data1.approval_deadline,
-//                         create_date: data1.create_date,
-//                         start_date: data1.start_date,
-//                         end_date: data1.end_date,
-//                         empno: data1.empno,
-//                         deptno: data1.deptno,
-//                         update_empno: data1.update_empno,
-//                         showDateRange: data1.form_id?.startsWith('BC'), // 날짜 범위 표시 여부
-//                         approvalLineDtos: data1.approvalLineDtos,
-//                         fileData: fileData
-//                     };
  				$.get("${pageContext.request.contextPath}/resources/template/approval-template.hbs", function(templateSource) {
                     let template = Handlebars.compile(templateSource);
                     let context = {
@@ -318,34 +294,11 @@
                     
 					$("#myModal").show();
  				})
-// 					openModal(data.approval_id);
-// 					console.log(data.approval_id);
 	            })
 	            .css('cursor', 'pointer'); // 클릭 가능하게 포인터 변경
 	        }
 	    });
 
-// 		function openModal(approval_id){
-// 			fetch("./approvalDetail.json?id="+approval_id)
-// 			.then(resp => resp.json())
-// 			.then(data => {
-// 				console.log(data);
-// 				 let html = "<div class='approval-item'>결<br>재</div>";
-// 		            data.approvalLineDtos.forEach((emp, i) => {
-// 		                console.log(emp.name, emp.approver_empno);
-// 		                html += "<div class='approval-item'>";
-// 		                html += "<div id='" + emp.approver_empno + "' class='text-center'></div>";
-// 		                html += "</div>";
-// 		            });
-
-// 	            document.getElementById("approvalLine").innerHTML = html;
-// 				$("#modal-content").html(data.approval_content);
-// 				$("#acceptBtn").val(data.approval_id);
-// 				$("#rejectBtn").val(data.approval_id);						
-// 				$("#myModal").show();
-// 			})
-// 			.catch(err => console.log(err));
-// 		}
 	  	$(document).on("click", ".modalBtn", function() {
 	        $("#myModal").hide();
 	    });
@@ -355,7 +308,7 @@
 			jsonData["approval_id"] = $("#acceptBtn").val();
 			console.log(jsonData);
 		
-			let data = await fetchJsonPost("./acceptApprovalLine.json", jsonData)
+			let data = await fetchJsonPost("./acceptApprovalLineAjax.do", jsonData)
 			if(data == true) {
 				Swal.fire("결재승인").then(()=>{
 					table.ajax.reload();
@@ -391,7 +344,7 @@
 				jsonData["reject_reason"] = result.value;
 				console.log(jsonData);
 				
-				let data = await fetchJsonPost("./rejectApprovalLine.json", jsonData)
+				let data = await fetchJsonPost("./rejectApprovalLineAjax.do", jsonData)
 				if(data == true) {
 					Swal.fire("반려성공").then(() => {
 						table.ajax.reload();
@@ -417,7 +370,7 @@
 			jsonData["approval_id"] = $("#acceptBtn").val();
 			console.log(jsonData);
 		
-			fetch("./acceptApprovalLine.json",{
+			fetch("./acceptApprovalLineAjax.do",{
 				method:"POST",
 				headers:{
 					"Content-Type":"application/json"
@@ -461,7 +414,7 @@
 				console.log(result);
 				jsonData["reject_reason"] = result.value;
 				console.log(jsonData);
-				fetch("./rejectApprovalLine.json",{
+				fetch("./rejectApprovalLineAjax.do",{
 					method:"POST",
 					headers:{
 						'Content-Type':'application/json'
@@ -483,73 +436,6 @@
 			})
 		});
 	});
-	
-// 	async function getDetail(id){
-// 		let response = await fetch("./approvalDetail.json?id="+id);
-// 		let data = await response.json(); 
-//         console.log("서버 응답 데이터:", data); 
-//         return data;
-// 	}
-	
-// 	async function getFile(id){
-// 		let response = await fetch("./fileList.json?id="+id);
-// 		let data = await response.json(); 
-//         console.log("서버 응답 데이터:", data); 
-//         return data;
-// 	}
-	
-	
-// 	async function download(event) {
-// 	    let file_id = event.value;
-// 	    let approval_id = $("#approval_id").text();
-// 	    console.log("다운로드 요청:", file_id, approval_id);
-	
-// 	    let jsonData = {
-// 	        file_id: file_id,
-// 	        approval_id: approval_id
-// 	    };
-	
-// 	    try {
-// 	        let response = await fetch("./download.json", {
-// 	            method: "POST",
-// 	            headers: {
-// 	                "Content-Type": "application/json"
-// 	            },
-// 	            body: JSON.stringify(jsonData)
-// 	        });
-	
-// 	        if (!response.ok) {
-// 	            throw new Error("파일 다운로드 실패: " + response.statusText);
-// 	        }
-	
-// 	        let blob = await response.blob();
-// 	        console.log("받은 파일 Blob:", blob);
-	
-// 	        let filename = "downloaded_file"; // 기본값 설정
-// 	        let contentDisposition = response.headers.get("Content-Disposition");
-// 	        console.log("응답 헤더 Content-Disposition:", contentDisposition);
-	
-// 	        if (contentDisposition) {
-// 	            let matches = contentDisposition.match(/filename\*?=(UTF-8'')?"?([^"]+)"?/);
-// 	            if (matches) {
-// 	                filename = matches[2] ? decodeURIComponent(matches[2]) : decodeURIComponent(matches[1]); // 파일명 URL 디코딩 적용
-// 	            }
-// 	        }
-	
-// 	        let link = document.createElement("a");
-// 	        link.href = window.URL.createObjectURL(blob);
-// 	        link.download = filename;
-// 	        document.body.appendChild(link);
-// 	        link.click();
-// 	        document.body.removeChild(link);
-// 	        URL.revokeObjectURL(link.href); // 메모리 해제
-	
-// 	        console.log("파일 다운로드 완료:", filename);
-// 	    } catch (error) {
-// 	        console.error("다운로드 중 오류 발생:", error);
-// 	        alert("파일 다운로드에 실패했습니다.");
-// 	    }
-// 	}
 </script>
 </html>
 

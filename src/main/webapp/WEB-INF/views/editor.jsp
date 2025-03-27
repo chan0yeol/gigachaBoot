@@ -8,7 +8,7 @@
 
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css">
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <style type="text/css">
 #content {
 	margin-right: 30px;

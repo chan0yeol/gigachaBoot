@@ -41,39 +41,39 @@ public class ApprovalRestController {
     private final IFileDao fileDao;
     private final WebSocketHandler webSocketHandler;
 
-    @PostMapping("/signatureSave.json")
+    @PostMapping("/signatureSaveAjax.do")
     public boolean signatureSave(@RequestBody Map<String, Object> map, HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         map.put("empno", loginDto.getEmpno());
         return employeeService.saveSignature(map);
     }
 
-    @PostMapping("/categorySave.json")
+    @PostMapping("/managerCategorySaveAjax.do")
     public boolean categorySave(@RequestBody ApprovalCategoryDto categoryDto) {
         System.out.println(categoryDto);
         categoryDto.setCategory_yname(categoryDto.getCategory_yname().toUpperCase());
         return approvalCategoryService.categoryInsert(categoryDto) == 1;
     }
 
-    @PostMapping("/approvalFormSave.json")
+    @PostMapping("/managerFormSaveAjax.do")
     public boolean approvalFormSave(@RequestBody ApprovalFormDto approvalFormDto) {
         System.out.println(approvalFormDto);
         int row = approvalFormService.formInsert(approvalFormDto);
         return row == 1;
     }
 
-    @PostMapping("/selectForm.json")
+    @PostMapping("/selectFormAjax.do")
     public Map<String, Object> selectFormContent(@RequestBody String form_id) {
         System.out.println(form_id);
         return approvalFormService.formSelectById(form_id);
     }
 
-    @PostMapping("/approvalFormUpdate.json")
+    @PostMapping("/approvalFormUpdateAjax.do")
     public boolean formUpdate(@RequestBody ApprovalFormDto approvalFormDto) {
         return approvalFormService.formUpdate(approvalFormDto) == 1;
     }
 
-    @PostMapping("/approvalDocumentSave.json")
+    @PostMapping("/approvalDocumentSaveAjax.do")
     public boolean approvalDocumentSave(
             @ModelAttribute ApprovalDto approvalDto,
             @RequestParam(value = "files", required = false) List<MultipartFile> files,
@@ -104,7 +104,7 @@ public class ApprovalRestController {
     }
 
     //	유효성 체크 버전
-    @PostMapping("/approvalDocumentSaveReg.json")
+    @PostMapping("/approvalDocumentSaveRegAjax.do")
     public ResponseEntity<?> approvalDocumentSaveReg(
             @ModelAttribute ApprovalDto approvalDto,
             @RequestParam(value = "files", required = false) List<MultipartFile> files,
@@ -131,7 +131,7 @@ public class ApprovalRestController {
         return approvalService.insertApproval(approvalDto, files, path) ? ResponseEntity.ok(true) : ResponseEntity.ok(false);
     }
 
-    @PostMapping("/approvalDocumentSaveTemp.json")
+    @PostMapping("/approvalDocumentSaveTempAjax.do")
     public boolean approvalDocumentSaveTemp(@RequestBody ApprovalDto approvalDto, @RequestParam(value = "files", required = false) List<MultipartFile> files, HttpSession session) {
         System.out.println(approvalDto);
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
@@ -139,7 +139,7 @@ public class ApprovalRestController {
         return approvalService.insertApprovalTemp(approvalDto, files);
     }
 
-    @GetMapping("/approvalList.json")
+    @GetMapping("/approvalListAjax.do")
     public String approvalListAjax(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         List<ApprovalDto> approvalList = approvalDao.selectApproval(Integer.parseInt(loginDto.getEmpno()));
@@ -147,7 +147,7 @@ public class ApprovalRestController {
         return gson.toJson(approvalList);
     }
 
-    @GetMapping("/approvalListTemp.json")
+    @GetMapping("/approvalListTempAjax.do")
     public String approvalListTempAjax(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         List<ApprovalDto> approvalList = approvalDao.selectApprovalTemp(loginDto.getEmpno());
@@ -156,7 +156,7 @@ public class ApprovalRestController {
     }
 
     // 문서 상세 api 요청
-    @GetMapping(value = "/approvalDetail.json", produces = "application/json; charset=UTF-8")
+    @GetMapping(value = "/approvalDetailAjax.do", produces = "application/json; charset=UTF-8")
     public String approvalDetailAjax(@RequestParam String id) {
         System.out.println(id);
         Gson gson = new Gson();
@@ -165,7 +165,7 @@ public class ApprovalRestController {
     }
 
     // 문서 수정
-    @PostMapping("/approvalUpdateForm.json")
+    @PostMapping("/approvalUpdateFormAjax.do")
     public boolean approvalUpdate(@RequestBody ApprovalDto approvalDto, List<MultipartFile> files, HttpSession session) {
         System.out.println(approvalDto);
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
@@ -174,18 +174,18 @@ public class ApprovalRestController {
     }
 
     // 문서 회수
-    @PostMapping("/approvalRecall.json")
+    @PostMapping("/approvalRecallAjax.do")
     public boolean approvalRecall(@RequestBody String approval_id) {
         return approvalService.recallApproval(approval_id) == 1;
     }
 
     // 임시저장상태에서 결재요청
-    @PostMapping("/approvalRequest.json")
+    @PostMapping("/approvalRequestAjax.do")
     public boolean approvalRequest(@RequestBody String approval_id) {
         return approvalService.approvalRequest(approval_id) == 1;
     }
 
-    @PostMapping("/selectApprovalInProgress.json")
+    @PostMapping("/selectApprovalInProgressAjax.do")
     public String selectApprovalInProgressAjax(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         List<ApprovalDto> approvalList = approvalService.selectApprovalInProgress(loginDto.getEmpno());
@@ -193,7 +193,7 @@ public class ApprovalRestController {
         return gson.toJson(approvalList);
     }
 
-    @PostMapping("/selectApprovalCompleted.json")
+    @PostMapping("/selectApprovalCompletedAjax.do")
     public String selectApprovalCompletedAjax(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         List<ApprovalDto> approvalList = approvalService.selectApprovalCompleted(loginDto.getEmpno());
@@ -201,7 +201,7 @@ public class ApprovalRestController {
         return gson.toJson(approvalList);
     }
 
-    @PostMapping("/selectApprovalRejected.json")
+    @PostMapping("/selectApprovalRejectedAjax.do")
     public String selectApprovalRejectedAjax(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         List<ApprovalDto> approvalList = approvalService.selectApprovalRejected(loginDto.getEmpno());
@@ -211,7 +211,7 @@ public class ApprovalRestController {
 
 
     // 결재승인
-    @PostMapping("/acceptApprovalLine.json")
+    @PostMapping("/acceptApprovalLineAjax.do")
     @ResponseBody
     public boolean acceptApprovalLine(@RequestBody Map<String, Object> map, HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
@@ -221,7 +221,7 @@ public class ApprovalRestController {
     }
 
     // 결재 반려
-    @PostMapping("/rejectApprovalLine.json")
+    @PostMapping("/rejectApprovalLineAjax.do")
     public boolean rejectApprovalLine(@RequestBody Map<String, Object> map, HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         map.put("empno", loginDto.getEmpno());
@@ -233,7 +233,7 @@ public class ApprovalRestController {
     }
 
     // 나의 결재함 api 요청주소
-    @PostMapping("/myApprovalData.json")
+    @PostMapping("/myApprovalDataAjax.do")
     public Map<String, Object> myDocumentsData(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         List<Map<String, Object>> documents = approvalService.selectApprovalMyDocuments(loginDto.getEmpno());
@@ -243,7 +243,7 @@ public class ApprovalRestController {
     }
 
     // 참조문서함 api 요청주소  selectApprovalReference
-    @GetMapping("/selectApprovalReference.json")
+    @GetMapping("/selectApprovalReferenceAjax.do")
     public Map<String, Object> selectApprovalReferenceAjax(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         List<Map<String, Object>> documents = approvalService.selectApprovalReference(loginDto.getEmpno());
@@ -253,13 +253,13 @@ public class ApprovalRestController {
     }
 
     // 캘린더로 보낼 휴가
-    @PostMapping("/postLeaveToCalendar.json")
+    @PostMapping("/postLeaveToCalendarAjax.do")
     public List<Map<String, Object>> postLeaveToCalendar(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         return approvalDao.postLeaveToCalendar(loginDto.getEmpno());
     }
 
-    @PostMapping("/insertSaveLine.json")
+    @PostMapping("/insertSaveLineAjax.do")
     public String insertSaveLine(@RequestBody Map<String, Object> map, HttpSession session) {
         System.out.println(map);
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
@@ -271,13 +271,13 @@ public class ApprovalRestController {
         return "true";
     }
 
-    @GetMapping("/selectSaveLine.json")
+    @GetMapping("/selectSaveLineAjax.do")
     public List<Map<String, Object>> selectSaveLine(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
         return approvalLineService.selectSaveLine(loginDto.getEmpno());
     }
 
-    @GetMapping(value = "/fileList.json", produces = "application/json; charset=UTF-8")
+    @GetMapping(value = "/fileListAjax.do", produces = "application/json; charset=UTF-8")
     public String fileList(@RequestParam String id) {
         Map<String, Object> map = new HashMap<>();
         map.put("approval_id", id);
@@ -288,7 +288,7 @@ public class ApprovalRestController {
     }
 
     //	파일다운로드
-    @PostMapping("/download.json")
+    @PostMapping("/downloadAjax.do")
     public byte[] download(
             @RequestBody Map<String, Object> map,
             HttpServletResponse response) throws IOException {
@@ -310,4 +310,10 @@ public class ApprovalRestController {
         return bytes;
     }
 
+    // 문서양식 삭제
+    @PostMapping("/managerFormDeleteAjax.do")
+    @ResponseBody
+    public boolean formUpdateUseYN(@RequestBody Map<String, Object> map) {
+        return approvalFormService.formUpdateUseYN(map) == 1 ? true : false;
+    }
 }

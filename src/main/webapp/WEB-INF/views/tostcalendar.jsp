@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <!-- TOAST UI Calendar v1.x (tui.Calendar 사용) -->
 <link rel="stylesheet" type="text/css"
 	href="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.css" />
@@ -41,7 +41,7 @@
 </style>
 </head>
 <body>
-	<%@ include file="layout/nav.jsp"%>
+	<%@ include file="./layout/nav.jsp"%>
 <%-- 	<%@ include file="./layout/sidebar.jsp"%> --%>
 	<div id="content">
 		<h3 class="content_title">제목</h3>

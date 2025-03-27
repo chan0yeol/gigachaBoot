@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,7 +10,7 @@
 <body>
 <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="/" class="logo d-flex align-items-center">
+      <a href="${pageContext.request.contextPath}" class="logo d-flex align-items-center">
         <img src="assets/img/logo.png" alt="">
         <span class="d-none d-lg-block">GIGACOMPANY</span>
       </a>
@@ -30,7 +31,7 @@
 				<span>부서 관리</span></a></li>
             <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/notice/notice.do"> 
 				<span>공지사항</span></a></li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/hrManagement/employeeRegistration.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/hrManagement/employeeAdd.do"> 
 				<span>인사등록</span></a></li>
             <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/hrManagement/mypage.do"> 
 				<span>마이페이지</span></a></li>
@@ -45,26 +46,11 @@
             <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/myattendance.do"> 
 				<span>나의 근태 현황</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/deptattendance.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/attendance.do"> 
 				<span>부서 근태 현황</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/deptannualleave.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/leaveattendance.do"> 
 				<span>부서 연차 현황</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/emplattendance.do"> 
-				<span>전사 근태현황</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/attstatistics.do"> 
-				<span>전사 근태통계</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/attannualleave.do"> 
-				<span>전사 연차현황</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/attuseannualleave.do"> 
-				<span>전사 연차 사용 내역</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/annstatistics.do"> 
-				<span>전사 연차 통계</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
           </ul>
         </li>
@@ -87,9 +73,11 @@
             <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalList.do"> 
 				<span>결재요청함</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalFormList.do"> 
-				<span>문서양식관리(관리자)</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
+            <c:if test="${loginDto.auth eq 'A'}">
+	            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/formList.do"> 
+					<span>문서양식</span></a></li>
+	            <li> <hr class="dropdown-divider"> </li>
+           </c:if>
           </ul>
         </li>
         <li class="nav-item dropdown pe-3">
@@ -97,31 +85,56 @@
             <span class="d-none d-md-block dropdown-toggle ps-2">예약</span>
           </a><!-- End Profile Iamge Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
-<%--             <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/roomform.do">  --%>
-<!-- 				<span>회의실 등록(관리자)</span></a></li> -->
-<!--             <li> <hr class="dropdown-divider"> </li> -->
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/roomList.do"> 
-				<span>회의실정보 리스트(관리자)</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
             <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservation.do"> 
 				<span>회의실 예약</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
             <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservationList.do"> 
 				<span>예약내역조회</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>
+            <li> <hr class="dropdown-divider"> </li>         
           </ul>
-        </li>
-      </ul>
+        </li>      
+        <c:if test="${loginDto.auth == 'A'}">
+<!--          <li class="nav-item dropdown pe-3"> -->
+         		<a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+            		<span class="d-none d-md-block dropdown-toggle ps-2">관리자</span>
+          		</a><!-- End Profile Iamge Icon -->
+          	<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
+            <li>
+            	<a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/roomList.do"> 
+					<span>회의실정보 리스트</span>
+				</a>
+				<a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservationList.do"> 
+					<span>전체회의실내역조회</span>
+				</a>
+			</li>
+      		</ul>
+		</c:if>
     </nav>
+
   </header>
-<div id="toast-container" style="
+  <!-- TODO 00207 Socket - 웹소켓 알림 표시될 Div   -->
+  <div id="toast-container" style="
     position: absolute;
     bottom: 15px;
     right: 15px;
     z-index: 1050;
 "></div>
-<script src="${pageContext.request.contextPath}/resources/js/notificationWebSocket.js"></script>
+<!--   <div class="toast" style=" -->
+/*     position: absolute; */
+/*     bottom: 15px; */
+/*     right: 15px; */
+<!-- "> -->
+<!--   <div class="toast-header"> -->
+<!--     <strong class="me-auto">알림내역</strong> -->
+<!--     <button type="button" class="btn-close" data-bs-dismiss="toast"></button> -->
+<!--   </div> -->
+<!--   <div class="toast-body"> -->
+<!--     <p id="toast-text"></p> -->
+<!--   </div> -->
+<!-- </div> -->
+
   <script src="https://bootstrapmade.com/assets/js/demo.js?v=42"></script>
+  <script src="${pageContext.request.contextPath}/resources/js/notificationWebSocket.js"></script>
   <script type="text/javascript">
   	var sideIsc = true;
   	document.querySelector(".toggle-sidebar-btn").addEventListener('click',() => {
@@ -133,7 +146,9 @@
   			document.body.className= "";
   			sideIsc = true;
   		}
+  		
   	});
   </script>
 </body>
+
 </html>

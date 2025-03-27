@@ -1,11 +1,10 @@
 package com.giga.gw.service;
 
-import java.util.List;
-import java.util.Map;
-
+import com.giga.gw.dto.ApprovalDto;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.giga.gw.dto.ApprovalDto;
+import java.util.List;
+import java.util.Map;
 
 public interface IApprovalService {
 	List<Map<String, Object>> getOrganizationTree();
@@ -25,4 +24,6 @@ public interface IApprovalService {
     List<ApprovalDto> selectApprovalRejected(String empno);
     List<Map<String, Object>> selectApprovalMyDocuments(String empno);
     List<Map<String, Object>> selectApprovalReference(String empno);
+    Map<String, Object> selectApprovalLineStats (String empno);
+    Map<String, Object> selectApprovalStats (String empno);
 }

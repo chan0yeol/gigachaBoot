@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <style type="text/css">
 #content {
 	margin-right: 30px;

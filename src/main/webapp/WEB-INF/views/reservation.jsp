@@ -8,7 +8,7 @@
 <head>
 <meta charset="UTF-8">
 <title>항상 보이는 Datepicker</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <!-- jQuery UI CSS -->
 <link rel="stylesheet"
 	href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
@@ -113,8 +113,8 @@
 </style>
 </head>
 <body>
-	<%@ include file="layout/newNav.jsp"%>
-	<%@ include file="layout/newSide.jsp"%>
+	<%@ include file="./layout/newNav.jsp"%>
+	<%@ include file="./layout/newSide.jsp"%>
 	<main id="main" class="main">
 		<div class="container mt-5"></div>
 		<!-- 항상 보이는 달력 -->
@@ -204,19 +204,19 @@
 						<input type="text" id="reservation_time">
 						<div class="mb-3">
 							<label for="reserver" class="form-label">예약자</label> 
-							<input type="text" class="form-control" id="reserver" value="${loginDto.empno}" readonly>
+							<input type="text" class="form-control required" id="reserver" value="${loginDto.empno}" readonly>
 						</div>
 						<div class="mb-3">
 							<label for="capacity" class="form-label">예약인원수</label> 
-							<input type="number" class="form-control" id="capacity" value="1" min="1" max="15">
+							<input type="number" class="form-control required" id="capacity" value="1" min="1" max="15">
 						</div>
 						<div class="mb-3">
 							<label for="member" class="form-label">참여자</label> 
-							<div id="member" class="form-control"></div>
+							<div id="member" class="form-control required"></div>
 						</div>
 						<div class="mb-3">
 							<label for="purpose" class="form-label">회의 사유</label> 
-							<input type="text" class="form-control" id="purpose">
+							<input type="text" class="form-control required" id="purpose">
 						</div>
 						<div id="organization">
 							<h2>조직도</h2>
@@ -227,7 +227,7 @@
 					</div>
 					<div class="modal-footer">
 						<button type="button" class="btn btn-secondary"
-							data-bs-dismiss="modal">취소</button>
+							data-bs-dismiss="modal" id="cancelBtn">취소</button>
 						<button type="button" id="reserSend" 
 							class="btn btn-primary">예약</button>
 					</div>
@@ -254,6 +254,7 @@
 				document.getElementById("reservation_date").value = paramdate;
 			}
 			
+			
 			// 데이터 피커 날짜 선택
 			$("#datepicker").datepicker({
 				inline : true, // 항상 보이도록 설정
@@ -262,6 +263,19 @@
 				changeMonth : true, // 월 변경 가능
 				showOtherMonths : true, // 이전/다음 달 날짜도 표시
 				selectOtherMonths : true, // 다른 달 날짜도 선택 가능
+				dayNames: ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
+			    dayNamesMin: ["일", "월", "화", "수", "목", "금", "토"],
+			    monthNames: [
+			        "1월", "2월", "3월", "4월", "5월", "6월",
+			        "7월", "8월", "9월", "10월", "11월", "12월"
+			    ],
+			    monthNamesShort: ["1월", "2월", "3월", "4월", "5월", "6월",
+                    "7월", "8월", "9월", "10월", "11월", "12월"],
+                currentText: "오늘",
+  				prevText: "이전 달",
+  				nextText: "다음 달",
+  				yearSuffix: "년",
+  				showMonthAfterYear: true, // 연도 뒤에 월 표시
 				onSelect : function(dateText) {
 					console.log("선택한 날짜: " + dateText);
 					document.getElementById("reservation_date").value = dateText;
@@ -300,11 +314,29 @@
 	    			
 	   			reservationModal = new bootstrap.Modal(document.getElementById("reservationModal"));
     			reservationModal.show();
+    		
 	   			}
     		}
 		    
-		   	// 예전전송 send submit
+		   	// 예약전송 send submit
 		   	document.getElementById("reserSend").onclick=function(){
+		   		event.preventDefault();
+		   		let requiredFields = document.querySelectorAll(".required");
+		   		let isValid = true;
+		   		
+		   		requiredFields.forEach(function(field){
+		   			if(field.value === ""){ //빈칸 확인
+		   				isValid = false;
+		   			}else{
+		   				field.style.border = ""; // 값이 있으면 원래대로
+		   			}
+		   		});
+		   		
+		   		if(!isValid){
+		   			alert("모든 항목을 입력하세요.");
+		   			return;
+		   		}
+		   		
 		   		console.log("send 작동");
 		   		//예약 버튼 비활성화
 		   		console.log(d);
@@ -377,6 +409,17 @@
 	                });
 		   		
 		   	};
+		   	document.getElementById("cancelBtn").addEventListener("click", function() {
+		   	    var requiredFields = document.querySelectorAll(".required");
+		   	    
+		   	    requiredFields.forEach(function(field) {
+		   	     if (field.id !== "reserver" && field.id !== "capacity") {
+		   	        field.value = ""; // 입력값 초기화
+		   	     }
+		   	        field.style.border = ""; // 테두리 원래대로
+		   	    });
+		   	});
+		  
 		   	
 	    	
 		    	// 조직도 jstress 조회 출력
@@ -388,7 +431,7 @@
 		            'core': {
 		                'data': function (node, cb) {
 		                    $.ajax({
-		                        url: "${pageContext.request.contextPath}/approval/tree.json",
+		                        url: "${pageContext.request.contextPath}/approval/treeAjax.do",
 		                        type: "GET",
 		                        dataType: "json",
 		                        success: function (data) {

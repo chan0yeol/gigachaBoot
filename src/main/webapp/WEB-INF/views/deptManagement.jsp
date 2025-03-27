@@ -6,7 +6,7 @@
 <head>
 <meta charset="UTF-8">
 <title>부서관리</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <link rel="stylesheet"
 	href="https://cdnjs.cloudflare.com/ajax/libs/jstree/3.3.12/themes/default/style.min.css" />
@@ -78,11 +78,11 @@ td {
 </head>
 
 <body>
-<%@ include file="layout/newNav.jsp" %>
-<%@ include file="layout/newSide.jsp" %>
+<%@ include file="./layout/newNav.jsp" %>
+<%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
 	<div class="row">
-		<div id="content" class="col-12">
+		<div id="content" class="col">
 			<h2 class="content_title">부서관리</h2>
 		
       <div class="row">
@@ -92,7 +92,6 @@ td {
             	<div>
             		<h5 class="card-title">조직도</h5>
           			<button id="addDept" class="btn btn-sm btn-primary">부서 추가</button>
-          			<button id="settingtDept" class="btn btn-sm btn-secondary">부서 관리</button>
             	</div>
             	<!-- 모달 -->
             	<div id="deptAddModal" class="modal">
@@ -184,7 +183,7 @@ td {
                 'core': {
                     'data': function (node, cb) {
                         $.ajax({
-                            url: "./tree.json",
+                            url: "./tree.do",
                             type: "GET",
                             dataType: "json",
                             success: function (data) {
@@ -215,7 +214,7 @@ td {
      	// 부서 상세 조회
         function addToApprovalLine(deptno, deptname) {
 
-			fetch("./deptGet.json?seq="+ deptno)
+			fetch("./deptGet.do?seq="+ deptno)
              .then(response => response.json())
              .then(data => {
              	console.log(data.deptname);
@@ -289,61 +288,209 @@ td {
 
         // 페이지 로드 시 초기 상태 설정
         $('#deptType').trigger('change');
-        
-        $('#modifyDept').click(function(){
-        	console.log("수정하기", tableData);
-        	
-//         	var getDept= document.querySelector(".table ")
-//      		console.log(getDept);
-//      		getDept.innerHTML=""
-        	
-//      			for(let i=0; i<tableData.length; i++){
-//     				var tr= document.createElement("tr");
-    				
-//     				for(let j=0; j<tableData[i].length; j++){
-//     					var item = tableData[i][j];
-    					
-//     					var th = document.createElement("th");
-    					
-//     					th.textContent = item.header;
-//     					tr.append(th);
-    					
-//     					var td = document.createElement("td");
-//     					var input=document.createElement("input");
-    					
-//     					if(td = ename){
-//     						input.value=item.value
-//     						td.append(input);
-    						
-//     					}else if(td = parent_deptname){
-//     						input.value=item.value
-//     						td.append(input);
-//     					}
-    					
-//     					/////
-//                         if (item.colspan) {
-//                             td.setAttribute("colspan", item.colspan);
-//                         }
-//                         tr.append(td);
-//                     }
-//                     	getDept.append(tr);
-//                 }
-        	
-        })
-
-     			var input = document.createElement("input");
-        		var GetDeptname = document.getElementById("getDeptname")
-        		
-        		GetDeptname.inner
-        		
-     			var selctBox = document.createElement("select");
-        		var hqDeptname = document.getElementById("getParent_deptname")
-        		
-        		
-
     });
-
-    
+   
+ // 수정하기
+    document.getElementById('modifyDept').addEventListener('click', function(){
+        console.log("수정하기", tableData);
+        
+        // 부서명 입력 필드로 변경
+        var input = document.createElement("input");
+        input.type = "text";
+        input.id = "editDeptName";
+        input.className = "form-control";
+        input.value = document.getElementById("getDeptname").textContent;
+        
+        var deptname = document.getElementById("getDeptname");
+        deptname.textContent = "";
+        deptname.appendChild(input);
+        
+        // 기존 본부명이 표시된 td 요소
+        var tdElement = document.getElementById("getParent_deptname");
+        // 기존 본부코드 값
+        var currentDeptNo = document.getElementById("getParent_deptno").textContent;
+        // 현재 부서 번호 저장
+        var deptNo = document.getElementById("getDeptno").textContent;
+        
+        fetch("./api/hqList.do", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            // select 요소 생성
+            const selectElement = document.createElement('select');
+            selectElement.id = 'hqSelect';
+            selectElement.className = 'form-control';
+            
+            // 본부 목록으로 option 추가
+            data.forEach(dept => {
+                const option = document.createElement('option');
+                option.value = dept.deptno;
+                option.textContent = dept.deptname;
+                
+                // 현재 선택된 본부와 일치하는 경우 selected 속성 추가
+                if (dept.deptno == currentDeptNo) {
+                    option.selected = true;
+                }
+                
+                selectElement.appendChild(option);
+            });
+            
+            // td 내용을 select 요소로 교체
+            while (tdElement.firstChild) {
+                tdElement.removeChild(tdElement.firstChild);
+            }
+            tdElement.appendChild(selectElement);
+            
+            // select 값이 변경되면 deptno 값도 업데이트
+            document.getElementById('hqSelect').addEventListener('change', function() {
+                document.getElementById('getParent_deptno').textContent = this.value;
+            });
+        })
+        .catch(error => console.error("데이터 가져오기 오류:", error));
+        
+        // 저장 버튼 생성
+        var saveButton = document.createElement("button");
+        saveButton.id = "saveButton";
+        saveButton.className = "btn btn-success btn-sm";
+        saveButton.textContent = "저장";
+        saveButton.style.marginRight = "5px";
+        
+        // 취소 버튼 생성
+        var cancelButton = document.createElement("button");
+        cancelButton.id = "cancelButton";
+        cancelButton.className = "btn btn-secondary btn-sm";
+        cancelButton.textContent = "취소";
+        
+        // 버튼을 담을 컨테이너 생성
+        var buttonContainer = document.createElement("div");
+        buttonContainer.id = "editButtons";
+        buttonContainer.style.marginTop = "10px";
+        buttonContainer.appendChild(saveButton);
+        buttonContainer.appendChild(cancelButton);
+        
+        // 버튼 컨테이너를 페이지에 추가 (수정 버튼이 있는 요소의 부모에 직접 추가)
+        var modifyButton = document.getElementById('modifyDept');
+        var parentElement = modifyButton.parentNode;
+        
+        // 이미 존재하는 버튼 컨테이너가 있다면 제거
+        var existingButtonContainer = document.getElementById("editButtons");
+        if (existingButtonContainer) {
+            existingButtonContainer.parentNode.removeChild(existingButtonContainer);
+        }
+        
+        // 부모 요소에 버튼 컨테이너 추가
+        parentElement.appendChild(buttonContainer);
+        
+        // 콘솔에 확인 메시지 출력
+        console.log("버튼 컨테이너 추가됨", buttonContainer);
+        
+        // 수정 버튼 숨기기
+        document.getElementById('modifyDept').style.display = "none";
+        
+        // 저장 버튼 클릭 이벤트
+        saveButton.addEventListener('click', function() {
+            // 수정된 값 가져오기
+            var newDeptName = document.getElementById('editDeptName').value;
+            var newParentDeptNo = document.getElementById('hqSelect').value;
+            
+            // 입력값 검증
+            if (!newDeptName.trim()) {
+                alert("부서명을 입력해주세요.");
+                return;
+            }
+            
+            console.log("수정된 정보:", {
+                deptno: deptNo,
+                deptname: newDeptName,
+                parent_deptno: newParentDeptNo
+            });
+            
+            // 서버에 수정된 데이터 전송
+            fetch("./deptUpdate.do", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    deptno: deptNo,
+                    deptname: newDeptName,
+                    parent_deptno: newParentDeptNo
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('서버 응답이 올바르지 않습니다.');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("저장 성공:", data);
+                
+                // 서버에서 반환된 데이터로 UI 업데이트
+                if (data.deptname) document.getElementById("getDeptname").textContent = data.deptname;
+                if (data.parent_deptname) document.getElementById("getParent_deptname").textContent = data.parent_deptname;
+                if (data.update_date) document.getElementById("getUpdate_date").textContent = data.update_date;
+                if (data.update_emp) document.getElementById("getUpdate_emp").textContent = data.update_emp;
+                if (data.create_date && !document.getElementById("getCreate_date").textContent) {
+                    document.getElementById("getCreate_date").textContent = data.create_date;
+                }
+                
+                // 버튼 컨테이너 제거
+                var buttonContainer = document.getElementById("editButtons");
+                if (buttonContainer) {
+                    buttonContainer.parentNode.removeChild(buttonContainer);
+                }
+                
+                // 수정 버튼 다시 표시
+                document.getElementById('modifyDept').style.display = "";
+                
+                // 상세 정보 다시 조회 (필요한 경우)
+                if (typeof addToApprovalLine === 'function') {
+                    addToApprovalLine(deptNo, data.deptname || newDeptName);
+                }
+                
+                // 성공 메시지 표시
+                alert("부서 정보가 성공적으로 수정되었습니다.");
+            })
+            .catch(error => {
+                console.error("저장 실패:", error);
+                alert("부서 정보 수정에 실패했습니다.");
+            });
+        });
+        
+        // 취소 버튼 클릭 이벤트
+        cancelButton.addEventListener('click', function() {
+            console.log("취소 버튼 클릭");
+            restoreOriginalUI();
+        });
+        
+        // 원래 UI로 되돌리는 함수
+        function restoreOriginalUI() {
+            // 부서명 원래대로 되돌리기
+            var deptname = document.getElementById("getDeptname");
+            var originalDeptName = document.getElementById("editDeptName").value;
+            deptname.textContent = originalDeptName;
+            
+            // 본부명 원래대로 되돌리기
+            var tdElement = document.getElementById("getParent_deptname");
+            var selectedOption = document.getElementById("hqSelect").options[document.getElementById("hqSelect").selectedIndex];
+            tdElement.textContent = selectedOption.textContent;
+            
+            // 버튼 컨테이너 제거
+            var buttonContainer = document.getElementById("editButtons");
+            if (buttonContainer) {
+                buttonContainer.parentNode.removeChild(buttonContainer);
+            }
+            
+            // 수정 버튼 다시 표시
+            document.getElementById('modifyDept').style.display = "";
+        }
+    });
+   
    // 부서 등록
     function savedept() {
     	const deptType = document.getElementById('deptType').value;
@@ -353,13 +500,7 @@ td {
         console.log(deptType)
         console.log(deptname)
         console.log(parent_deptno)
-        
-        // 입력값 검증
-//         if (!deptname || !parent_deptno) {
-//             alert("모든 필드를 입력해주세요.");
-//             return;
-//         }
-        
+
         const data = {
             deptType: deptType,
             deptname: deptname,

@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <title>그리드</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/2.2.2/js/dataTables.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/2.2.2/css/dataTables.dataTables.min.css"/>

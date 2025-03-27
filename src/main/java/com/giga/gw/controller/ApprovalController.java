@@ -1,23 +1,23 @@
 package com.giga.gw.controller;
 
-import com.giga.gw.config.WebSocketHandler;
 import com.giga.gw.dto.ApprovalCategoryDto;
 import com.giga.gw.dto.ApprovalDto;
 import com.giga.gw.dto.ApprovalFormDto;
 import com.giga.gw.dto.EmployeeDto;
 import com.giga.gw.repository.IApprovalDao;
 import com.giga.gw.repository.IEmployeeDao;
-import com.giga.gw.service.*;
+import com.giga.gw.service.IApprovalCategoryService;
+import com.giga.gw.service.IApprovalFormService;
+import com.giga.gw.service.IApprovalService;
 import com.google.gson.Gson;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -45,7 +45,7 @@ public class ApprovalController {
     }
 
     @ResponseBody
-    @GetMapping("/tree.json")
+    @GetMapping("/treeAjax.do")
     public List<Map<String, Object>> tree() {
         return approvalDao.getOrganizationTree();
     }
@@ -60,7 +60,7 @@ public class ApprovalController {
     }
 
 
-    @GetMapping("/signatureRead.json")
+    @GetMapping("/signatureReadAjax.do")
     @ResponseBody
     public List<Map<String, Object>> signatureRead(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
@@ -84,13 +84,13 @@ public class ApprovalController {
 //	}
 
     // TODO 00100 전자결재 - 카테고리 Controller
-    @GetMapping("/categoryForm.do")
+    @GetMapping("/managerCategoryForm.do")
     public String categoryForm() {
         return "approvalCategoryForm";
     }
 
     // 카테고리 중복체크
-    @GetMapping("/categoryCheck.json")
+    @GetMapping("/managerCategoryCheckAjax.do")
     @ResponseBody
     public boolean categoryCheck(String yname) {
         return approvalCategoryService.categoryCheck(yname.toUpperCase()) == 0;
@@ -98,7 +98,7 @@ public class ApprovalController {
 
     // 카테고리 저장
 
-    @GetMapping("/category.do")
+    @GetMapping("/managerCategoryList.do")
     public String categoryList(Model model) {
         List<ApprovalCategoryDto> categoryList = approvalCategoryService.categorySelect();
         model.addAttribute("categoryList", categoryList);
@@ -106,7 +106,7 @@ public class ApprovalController {
     }
 
     // 문서양식 등록시 카테고리 선택을 위한 팝업창
-    @GetMapping("/categoryPop.do")
+    @GetMapping("/managerCategoryPop.do")
     public String categoryPop(Model model) {
         List<ApprovalCategoryDto> categoryList = approvalCategoryService.categorySelect();
         model.addAttribute("categoryList", categoryList);
@@ -115,23 +115,30 @@ public class ApprovalController {
 
     // TODO 00101 전자결재 문서양식 Controller
     // 문서양식 리스트 조회
-    @GetMapping("/approvalFormList.do")
+    @GetMapping("/formList.do")
     public String approvalForm(Model model) {
         List<ApprovalFormDto> formList = approvalFormService.formSelectAll();
         model.addAttribute("formList", formList);
         return "approvalFormList";
     }
 
-    @GetMapping("/approvalFormDetail.do")
+    @GetMapping("/managerFormDetail.do")
     public String approvalFormDetail(@RequestParam String id, Model model) {
         System.out.println(id);
         ApprovalFormDto form = approvalFormService.formSelectDetail(id);
         model.addAttribute("form", form);
         return "approvalFormDetail";
     }
+    @GetMapping("/formDetailAjax.do")
+    @ResponseBody
+    public ResponseEntity<ApprovalFormDto> formDetailAjax(@RequestParam String id, Model model) {
+        System.out.println(id);
+        ApprovalFormDto form = approvalFormService.formSelectDetail(id);
+        return ResponseEntity.ok(form);
+    }
 
     // 문서양식 등록 페이지로 이동
-    @GetMapping("/approvalFormCreate.do")
+    @GetMapping("/managerFormCreate.do")
     public String approvalFormCarete() {
         return "approvalFormCreate";
     }
@@ -141,7 +148,7 @@ public class ApprovalController {
 
     // 문서양식 tree 데이터 조회 api
     @ResponseBody
-    @GetMapping("/formTree.json")
+    @GetMapping("/formTreeAjax.do")
     public List<Map<String, Object>> formTree() {
         return approvalDao.formTree();
     }
@@ -156,7 +163,7 @@ public class ApprovalController {
 
 
     // 문서양식 수정페이지 이동
-    @GetMapping("/approvalFormUpdate.do")
+    @GetMapping("/managerFormUpdate.do")
     public String approvalFormUpdate(@RequestParam String id, Model model, HttpSession session) {
         ApprovalFormDto dto = approvalFormService.formSelectDetail(id);
         model.addAttribute("form", dto);
@@ -167,11 +174,11 @@ public class ApprovalController {
 
 
     // 문서양식 삭제
-    @GetMapping("/approvalFormDelete.json")
+    /*@GetMapping("/managerFormDeleteAjax.do")
     @ResponseBody
     public boolean formDelete(@RequestParam String id) {
         return approvalFormService.formDelete(id) == 1;
-    }
+    }*/
 
     // TODO 00102 전자결재 문서
     // 전자결재 문서 작성 페이지 이동
@@ -224,7 +231,7 @@ public class ApprovalController {
         return "approvalRequestList";
     }
 
-    @GetMapping("/approvalRequestList.json")
+    @GetMapping("/approvalRequestListAjax.do")
     @ResponseBody
     public String approvalRequestListAjax(HttpSession session) {
         EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
@@ -277,5 +284,15 @@ public class ApprovalController {
         return "selectApprovalReference";
     }
 
-
+    @PostMapping("/categoryUseChange.do")
+    @ResponseBody
+    public ResponseEntity<Boolean> categoryUseChange(@RequestBody Map<String, Object> map) {
+        return ResponseEntity.ok(approvalCategoryService.categoryUpdateUseYN(map));
+    }
+    @PostMapping("/ocrUpload.do")
+    @ResponseBody
+    public ResponseEntity<?> ocrUpload(@RequestParam MultipartFile ocrFile) {
+        log.info("업로드 파일 {}",ocrFile);
+        return null;
+    }
 }

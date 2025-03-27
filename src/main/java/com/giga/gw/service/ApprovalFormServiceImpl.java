@@ -1,16 +1,14 @@
 package com.giga.gw.service;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import com.giga.gw.dto.ApprovalFormDto;
 import com.giga.gw.repository.IApprovalDao;
 import com.giga.gw.repository.IApprovalFormDao;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -32,9 +30,9 @@ public class ApprovalFormServiceImpl implements IApprovalFormService {
 	}
 
 	@Override
-	public int formDelete(String form_id) {
-		int cnt = approvalDao.countApproval(form_id);
-		return cnt == 0 ? approvalFormDao.formDelete(form_id) : 0;
+	public int formUpdateUseYN(Map<String, Object> map) {
+
+		return approvalFormDao.formUpdateUseYN(map);
 	}
 
 	@Override
@@ -51,5 +49,4 @@ public class ApprovalFormServiceImpl implements IApprovalFormService {
 	public Map<String, Object> formSelectById(String form_id) {
 		return approvalFormDao.formSelectById(form_id);
 	}
-
 }

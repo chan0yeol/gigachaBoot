@@ -5,7 +5,7 @@
 <head>
 <meta charset="UTF-8">
 <title>전자결재</title>
-<%@ include file="layout/header.jsp"%>
+<%@ include file="./layout/header.jsp"%>
 <link rel="stylesheet"
 	href="https://cdn.jsdelivr.net/npm/@toast-ui/editor@3.2.2/dist/toastui-editor.min.css">
 <script
@@ -102,7 +102,6 @@
 	<%-- 	<%@ include file="./layout/newSide.jsp"%> --%>
 	
 </body>
-<script src="${pageContext.request.contextPath}/resources/js/notificationWebSocket.js"></script>
 <script type="text/javascript">
    // --- 결제선 script 시작 ---- 
 	document.getElementById("line").addEventListener('click', () => {
@@ -175,7 +174,7 @@
 		console.log(btoa(data));
 		console.log(data)
 	  //window.open(data);
-		fetch('./signatureSave.json',{
+		fetch('./signatureSaveAjax.do',{
 			method:'post',
 			headers:{
 				'Content-Type':'application/json'
@@ -190,7 +189,7 @@
 	});
 	
 	readButton.addEventListener('click',()=>{
-		fetch('./signatureRead.json')
+		fetch('./signatureReadAjax.do')
 		.then(res => res.json())
 		.then(data => {
 			console.log(data);

@@ -30,11 +30,11 @@ document.querySelector("#saveBtn").addEventListener('click', async () => {
 
     console.log(jsonData);
 
-    let data = await fetchJsonPost('./approvalUpdateForm.json', jsonData);
+    let data = await fetchJsonPost('./approvalUpdateFormAjax.do', jsonData);
 
     if(data == true) {
         Swal.fire("작성성공").then(()=>{
-            location.href="./approvalDetail.do?id="+jsonData["approval_id"];
+            location.href="./approvalListTemp.do";
         });
     } else{
         Swal.fire("작성실패");
@@ -42,7 +42,7 @@ document.querySelector("#saveBtn").addEventListener('click', async () => {
 
 
 
-    /*fetch('./approvalUpdateForm.json',{
+    /*fetch('./approvalUpdateFormAjax.do',{
         method:'POST',
         headers:{
             'Content-Type':'application/json'

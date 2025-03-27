@@ -3,7 +3,7 @@
 <mapper namespace="com.giga.gw.repository.IApprovalFormDao">
 	<insert id="formInsert" parameterType="approvalFormDto">
 		<selectKey keyProperty="form_id" resultType="String"
-			order="BEFORE">
+				   order="BEFORE">
 			SELECT
 			(SELECT CATEGORY_YNAME FROM APPROVAL_CATEGORY WHERE CATEGORY_ID =
 			#{category_id}) ||
@@ -15,17 +15,17 @@
 	</insert>
 
 	<update id="formUpdate" parameterType="approvalFormDto">
-		UPDATE APPROVAL_FORM 
+		UPDATE APPROVAL_FORM
 		SET FORM_NAME = #{form_name}, FORM_CONTENT= #{form_content}
 		WHERE FORM_ID = #{form_id}
 	</update>
-	
-	<update id="formDelete" parameterType="String">
-		UPDATE APPROVAL_FORM 
-			SET USE_YN = 'N'
-			WHERE FORM_ID = #{form_id}
+
+	<update id="formUpdateUseYN">
+		UPDATE APPROVAL_FORM
+		SET USE_YN = #{use_yn}
+		WHERE FORM_ID = #{id}
 	</update>
-	
+
 	<resultMap type="approvalFormDto" id="formJoinCategory">
 		<result property="category_id" column="CATEGORY_ID" />
 		<result property="form_content" column="CATEGORY_NAME" />
@@ -33,31 +33,40 @@
 		<result property="form_name" column="FORM_NAME" />
 		<result property="create_date" column="CREATE_DATE" />
 	</resultMap>
-	
+
 	<select id="formSelectAll" resultMap="formJoinCategory">
-		SELECT CATEGORY_ID, CATEGORY_NAME , FORM_ID, FORM_NAME, t1.CREATE_DATE 
-		FROM APPROVAL_FORM t1 JOIN APPROVAL_CATEGORY t2
-		USING(CATEGORY_ID)
-		WHERE t2.USE_YN = 'Y' AND t1.USE_YN = 'Y'
+		SELECT
+			CATEGORY_ID,
+			CATEGORY_NAME ,
+			FORM_ID,
+			FORM_NAME,
+			NVL(TO_CHAR(t1.CREATE_DATE,'YYYY-MM-DD'),'-') CREATE_DATE,
+			NVL(TO_CHAR(t1.UPDATE_DATE,'YYYY-MM-DD'),'-') UPDATE_DATE,
+			t1.USE_YN
+		FROM APPROVAL_FORM t1
+				 JOIN APPROVAL_CATEGORY t2
+					  USING(CATEGORY_ID)
+		ORDER BY t1.CREATE_DATE DESC
 	</select>
-	
+
 	<select id="formSelectDetail" resultType="approvalFormDto">
 		SELECT FORM_ID, CATEGORY_ID, FORM_NAME, FORM_CONTENT, CREATE_DATE
 		FROM APPROVAL_FORM
 		WHERE FORM_ID = #{form_id}
 	</select>
-	
-	
-	 <resultMap type="java.util.Map" id="formSelectId">
+
+
+	<resultMap type="java.util.Map" id="formSelectId">
 		<result property="FORM_ID" column="FORM_ID" javaType="java.lang.String"/>
 		<result property="FORM_NAME" column="FORM_NAME" javaType="java.lang.String"/>
 		<result property="FORM_CONTENT" column="FORM_CONTENT" javaType="java.lang.String"/>
-   </resultMap>
+	</resultMap>
 	<select id="formSelectById" resultMap="formSelectId">
 		SELECT FORM_ID, FORM_NAME, FORM_CONTENT FROM APPROVAL_FORM
-		WHERE FORM_ID = #{form_id}	
+		WHERE FORM_ID = #{form_id}
 	</select>
-	
-	
-	
+
+
+
+
 </mapper>
