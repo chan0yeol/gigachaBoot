@@ -1,14 +1,12 @@
 package com.giga.gw.service;
 
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import com.giga.gw.dto.EmployeeDto;
 import com.giga.gw.repository.ILoginDao;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.Map;
 
 @Service
 @Slf4j
@@ -18,9 +16,9 @@ public class LoginServiceImpl implements ILoginService {
 	private final ILoginDao loginDao;
 	
 	@Override
-	public EmployeeDto login(Map<String, Object> map) {
+	public EmployeeDto login(String empno) {
 		
-		return loginDao.login(map);
+		return loginDao.login(empno);
 	}
 
 	@Override

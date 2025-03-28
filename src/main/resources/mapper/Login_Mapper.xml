@@ -4,6 +4,7 @@
 	<select id="login" resultType="employeeDto">
 		SELECT EMPNO,
 			   DEPTNO,
+			   PASSWORD,
 			   (SELECT DEPTNAME FROM DEPARTMENTS d WHERE DEPTNO = e.DEPTNO) DEPTNAME ,
 			   (SELECT JOB_TITLE FROM JOBS j WHERE JOB_ID = e.JOB_ID) JOB_TITLE ,
 			   JOB_ID,
@@ -26,7 +27,6 @@
 			   USE_YN
 		FROM EMPLOYEES e
 		WHERE EMPNO = #{empno}
-		  AND PASSWORD = #{password}
 	</select>
 
 <!-- 사원번호 찾기 -->

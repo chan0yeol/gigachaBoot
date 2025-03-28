@@ -3,9 +3,13 @@ package com.giga.gw;
 
 import com.giga.gw.dto.EmployeeDto;
 import com.giga.gw.service.IApprovalService;
+import com.giga.gw.service.ILoginService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -14,12 +18,17 @@ import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class HomeController {
 
 	private final IApprovalService approvalService;
+	private final ILoginService loginService;
 
 	@GetMapping("/")
-	public String index(HttpSession session) {
+	public String index(@AuthenticationPrincipal UserDetails user, HttpSession session) {
+		log.info("권한 : !!!! {} ", user.getAuthorities());
+		EmployeeDto loginDto = loginService.login(user.getUsername());
+		session.setAttribute("loginDto", loginDto);
 		return "index";
 	}
 
@@ -51,4 +60,6 @@ public class HomeController {
 
 		return ResponseEntity.ok().body(response);
 	}
+
+
 }
