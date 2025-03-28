@@ -1,12 +1,12 @@
 package com.giga.gw.service;
 
-import java.util.Map;
-
 import com.giga.gw.dto.EmployeeDto;
+
+import java.util.Map;
 
 public interface ILoginService {
 	
-	EmployeeDto login(Map<String, Object> map);
+	EmployeeDto login(String empno);
 	String findEmpnoByNameAndEmail(Map<String, Object> map);
 
 }

@@ -44,7 +44,7 @@
                     <h5 class="card-title text-center pb-0 fs-4">GIGACHA</h5>
                   </div>
 
-                  <form class="row g-3 needs-validation" action="./login.do" method="POST" novalidate="">
+                  <form class="row g-3 needs-validation" action="/login.do" method="POST" novalidate="">
 
                     <div class="col-12">
                       <label for="yourUsername" class="form-label">사원번호</label>
@@ -59,7 +59,12 @@
                       <input type="password" name="password" class="form-control" id="yourPassword" required="">
                       <div class="invalid-feedback">비밀번호 입력해주세요</div>
                     </div>
-
+					  <div class="col-12">
+						  <div class="form-check">
+							  <input class="form-check-input" type="checkbox" name="remember-me" value="true" id="rememberMe">
+							  <label class="form-check-label" for="rememberMe">Remember me</label>
+						  </div>
+					  </div>
                     <div class="col-12">
                       <button class="btn btn-primary w-100" type="submit">Login</button>
                     </div>

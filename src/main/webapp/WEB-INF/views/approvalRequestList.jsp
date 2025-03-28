@@ -271,29 +271,31 @@
 					
                     console.log("결재 상세 데이터:", data1);
                     console.log("첨부 파일 데이터:", fileData);
- 				$.get("${pageContext.request.contextPath}/resources/template/approval-template.hbs", function(templateSource) {
-                    let template = Handlebars.compile(templateSource);
-                    let context = {
-                        approval_id: data1.approval_id,
-                        form_id: data1.form_id,
-                        approval_status: data1.approval_status,
-                        approval_title: data1.approval_title,
-                        approval_content: data1.approval_content,
-                        approval_deadline: data1.approval_deadline,
-                        create_date: data1.create_date,
-                        start_date: data1.start_date,
-                        end_date: data1.end_date,
-                        empno: data1.empno,
-                        deptno: data1.deptno,
-                        update_empno: data1.update_empno,
-                        showDateRange: data1.form_id?.startsWith('BC'), // 날짜 범위 표시 여부
-                        approvalLineDtos: data1.approvalLineDtos,
-                        fileData: fileData
-                    };
-                    $("#myModal .modal-dialog").html(template(context));
-                    
-					$("#myModal").show();
- 				})
+
+					$.get("${pageContext.request.contextPath}/resources/template/approval-template.hbs",
+							function(templateSource) {
+								let template = Handlebars.compile(templateSource);
+								let context = {
+									approval_id: data1.approval_id,
+									form_id: data1.form_id,
+									approval_status: data1.approval_status,
+									approval_title: data1.approval_title,
+									approval_content: data1.approval_content,
+									approval_deadline: data1.approval_deadline,
+									create_date: data1.create_date,
+									start_date: data1.start_date,
+									end_date: data1.end_date,
+									empno: data1.empno,
+									deptno: data1.deptno,
+									update_empno: data1.update_empno,
+									showDateRange: data1.form_id?.startsWith('BC'), // 날짜 범위 표시 여부
+									approvalLineDtos: data1.approvalLineDtos,
+									fileData: fileData
+								};
+								$("#myModal .modal-dialog").html(template(context));
+
+								$("#myModal").show();
+					})
 	            })
 	            .css('cursor', 'pointer'); // 클릭 가능하게 포인터 변경
 	        }

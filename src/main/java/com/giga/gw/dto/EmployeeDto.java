@@ -10,6 +10,7 @@ import lombok.*;
 @AllArgsConstructor
 public class EmployeeDto {
 	private String empno,
+			password,
 			deptno,
 			deptname,
 			job_id,

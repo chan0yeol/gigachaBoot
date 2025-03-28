@@ -1,11 +1,11 @@
 package com.giga.gw.repository;
 
-import java.util.Map;
-
 import com.giga.gw.dto.EmployeeDto;
+
+import java.util.Map;
 
 public interface ILoginDao {
 
-	EmployeeDto login(Map<String, Object> map);
+	EmployeeDto login(String empno);
 	String findEmpnoByNameAndEmail(Map<String, Object> map);
 }
