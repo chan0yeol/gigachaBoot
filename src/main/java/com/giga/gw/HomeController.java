@@ -25,6 +25,11 @@ public class HomeController {
 	private final ILoginService loginService;
 
 	@GetMapping("/")
+	public String home() {
+		return "redirect:/index.do";
+	}
+
+	@GetMapping("/index.do")
 	public String index(@AuthenticationPrincipal UserDetails user, HttpSession session) {
 		log.info("권한 : !!!! {} ", user.getAuthorities());
 		EmployeeDto loginDto = loginService.login(user.getUsername());

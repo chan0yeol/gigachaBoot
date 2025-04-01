@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .logout(logout ->
                         logout
                                 .logoutUrl("/logout.do")
-                                .logoutSuccessUrl("/")
+                                .logoutSuccessUrl("/index.do")
                                 .invalidateHttpSession(true) // 로그아웃되면 세션 지움
                                 .deleteCookies("JSESSIONID") // 쿠키 지움
                 )
