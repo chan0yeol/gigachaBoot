@@ -40,7 +40,11 @@ public class SecurityConfig {
                                 .loginProcessingUrl("/login.do") // submit을 처리할 요청 주소
                                 .usernameParameter("empno") // 아이docker 디 입력 name값
                                 .passwordParameter("password") // 비밀번호 입력 name 값
-                                .defaultSuccessUrl( "/",true)
+                                .defaultSuccessUrl( "/index.do",true)
+                                .successHandler((request, response, authentication) -> {
+                                    String redirectUrl = "/index.do";
+                                    response.sendRedirect(redirectUrl);
+                                })
                                 .permitAll()// 로그인 성공시 이동할 페이지
                 )
                 .authorizeHttpRequests(request -> // 요청을 forward Dispatcher에 대한 허용
@@ -55,7 +59,7 @@ public class SecurityConfig {
                 .logout(logout ->
                         logout
                                 .logoutUrl("/logout.do")
-                                .logoutSuccessUrl("/index.do")
+                                .logoutSuccessUrl("/loginForm.do")
                                 .invalidateHttpSession(true) // 로그아웃되면 세션 지움
                                 .deleteCookies("JSESSIONID") // 쿠키 지움
                 )
