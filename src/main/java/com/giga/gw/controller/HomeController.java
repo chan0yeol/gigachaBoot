@@ -1,4 +1,4 @@
-package com.giga.gw;
+package com.giga.gw.controller;
 
 
 import com.giga.gw.dto.EmployeeDto;
