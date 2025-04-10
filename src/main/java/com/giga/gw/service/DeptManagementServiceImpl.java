@@ -1,15 +1,13 @@
 package com.giga.gw.service;
 
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
 import com.giga.gw.dto.DepartmentDto;
 import com.giga.gw.repository.IDeptManagementDao;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,16 +25,10 @@ public class DeptManagementServiceImpl implements IDeptManagementService{
 	public int duplicateCheck(String dto) {
 		return deptManagementDao.duplicateCheck(dto);
 	}
-
-
+	
 	@Override
-	public int updateDept(DepartmentDto dto) {
-		return deptManagementDao.updateDept(dto);
-	}
-
-	@Override
-	public int deleteDept(List<String> dto) {
-		return deptManagementDao.deleteDept(dto);
+	public int updateDept(Map<String, Object> map) {
+		return deptManagementDao.updateDept(map);
 	}
 
 	@Override
@@ -58,6 +50,7 @@ public class DeptManagementServiceImpl implements IDeptManagementService{
 	public List<DepartmentDto> getDeletedDept() {
 		return deptManagementDao.getDeletedDept();
 	}
+
 
 
 }

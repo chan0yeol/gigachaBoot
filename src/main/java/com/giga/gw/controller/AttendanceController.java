@@ -1,5 +1,16 @@
 package com.giga.gw.controller;
 
+import com.giga.gw.dto.EmployeeDto;
+import com.giga.gw.repository.IAttendanceDao;
+import com.giga.gw.service.IAttendanceService;
+import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -7,26 +18,6 @@ import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-
-import jakarta.servlet.http.HttpSession;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.giga.gw.dto.EmployeeDto;
-import com.giga.gw.repository.IAttendanceDao;
-import com.giga.gw.service.AttendanceServiceImpl;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("/attendance")
@@ -36,12 +27,28 @@ public class AttendanceController {
 
 	@Autowired
 	private IAttendanceDao attendanceDao;
+	@Autowired
+	private IAttendanceService attendanceService;
 
 //	나의 근무 현황             
 //	/myattendance.do"> <
 	@GetMapping("/myattendance.do")
-	public String fullcalendar(HttpSession session) {
+	public String myAttendance(HttpSession session) {
 		return "attendance";
+	}
+	
+//	회사 근태 현황             
+//	/myattendance.do"> <
+	@GetMapping("/attendance.do")
+	public String EmployeeAttendance(HttpSession session) {
+		return "EmployeeAttendance";
+	}
+	
+//	회사 연차 현황             
+//	/myattendance.do"> <
+	@GetMapping("/leaveattendance.do")
+	public String EmployeeLeave(HttpSession session) {
+		return "EmployeeLeave";
 	}
 
 	// 연차 불러오기
@@ -165,6 +172,29 @@ public class AttendanceController {
 	        return ResponseEntity.internalServerError().build(); // 예외 발생 시 500 반환
 	    }
 	}
+	
+	@PostMapping("/selectemployeeLeave.do")
+	@ResponseBody
+	public Map<String, Object> SelectemployeeLeave(HttpSession session){
+		EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
+		
+		List<Map<String, Object>> leaveList =  attendanceDao.selectemployeeLeave(loginDto.getEmpno());		
+		
+//		[{ANNUAL_LEAVE=23, ANNUAL_COUNT=20, EMPNO=1505001, USE_LEAVE=3}]
+		
+//		φ(*￣0￣)φ(*￣0￣)φ(*￣0￣)( •̀ ω •́ )✧φ(*￣0￣)φ(*￣0￣)φ(*￣0￣)( •̀ ω •́ )✧[{ANNUAL_LEAVE=23, ANNUAL_COUNT=20, EMPNO=1505001, USE_LEAVE=3}]
+		
+		Map<String, Object> leaveMap = null;
+		if (leaveList != null && !leaveList.isEmpty()) {
+		    leaveMap = leaveList.get(0);
+		}
+//
+//		// Now you can pass leaveMap to your JSP
+//		request.setAttribute("leaveInfo", leaveMap);
+
+		return leaveMap;
+		
+	}
 
 
 
@@ -175,20 +205,6 @@ public class AttendanceController {
 //	                    
 //	부서 연차 현황                    
 //	/deptannualleave.do"
-//	                    
-//	전사 근무현황                    
-//	/emplattendance.do">
-//	                    
-//	전사 근무통계                    
-//	/attstatistics.do"> 
-//	                    
-//	전사 연차현황                    
-//	/attannualleave.do">
-//	                    
-//	전사 연차 사용 내역                    
-//	/attuseannualleave.d
-//	                    
-//	전사 연차 통계                    
-//	/annstatistics.do"> 
+
 
 }

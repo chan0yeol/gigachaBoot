@@ -1,40 +1,21 @@
 package com.giga.gw.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.WebUtils;
-
 import com.giga.gw.dto.EmployeeDto;
 import com.giga.gw.dto.RoomDto;
 import com.giga.gw.service.IRoomService;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.util.List;
+import java.util.UUID;
 
 @Controller
 @RequiredArgsConstructor
@@ -58,6 +39,7 @@ public class RoomController {
 			HttpSession session,
 								@RequestParam MultipartFile file, HttpServletRequest request,
 								Model model) {
+
 		EmployeeDto employee = (EmployeeDto)session.getAttribute("loginDto");
 			
 		if(employee == null) { //로그인 여부 확인
@@ -133,7 +115,7 @@ public class RoomController {
 		 }
 	
 	
-	//회의실 리스트 조회(관리자)
+	//회의실 리스트 조회
 	@GetMapping("/roomList.do")
 	public String roomList(Model model) {
 		List<RoomDto> roomList = roomService.selectAllRooms();
@@ -155,6 +137,9 @@ public class RoomController {
 	        return ResponseEntity.status(400).body(false);  // 실패 시 응답
 	    }
 	}
+	
+
+	
 	
 	
 

@@ -1,16 +1,13 @@
 package com.giga.gw.repository;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.giga.gw.dto.EmployeeDto;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.giga.gw.dto.EmployeeDto;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @Slf4j
@@ -34,6 +31,36 @@ public class EmployeeDaoImpl implements IEmployeeDao {
 	public int updateSignature(String empno) {
 		return sql.update(NS+"updateSignature",empno);
 	}
+	
+	@Override
+	public String getNextEmpno(String empno) {
+		return sql.selectOne(NS+"getNextEmpno", empno);
+	}
+
+	@Override
+	public int insertEmployee(Map<String, Object> map) {
+		return sql.insert(NS+"insertEmployee", map);
+	}
+
+	@Override
+	public List<EmployeeDto> employeeList() {
+		return sql.selectList(NS+"employeeList");
+	}
+	
+	@Override
+	public EmployeeDto getEmpno(String empno) {
+		return sql.selectOne(NS+"getEmpno", empno);
+	}
+
+	@Override
+	public EmployeeDto getMypage(String empno) {
+		return sql.selectOne(NS+"getMypage", empno);
+	}
+
+	
+
+	
+
 
 
 }

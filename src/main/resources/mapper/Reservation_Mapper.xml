@@ -26,36 +26,57 @@
 	<!-- 예약 전체 조회 -->
 	<select id="selectReservationByRoomId" resultType="ReservationDto">
 	SELECT
-    r2.RESERVATION_ID,
-    r2.ROOM_ID ,
-    r.ROOM_NAME,
-    r2.RESERVATION_DATE,
-    r2.RESERVATION_TIME,
-    r2.RESERVER,
-    r2.MEMBER,
-    r2.PURPOSE,
-    r2.CAPACITY  
+	    r2.RESERVATION_ID,
+	    r2.ROOM_ID ,
+	    r.ROOM_NAME,
+	    r2.RESERVATION_DATE,
+	    r2.RESERVATION_TIME,
+	    r2.RESERVER,
+	    r2.MEMBER,
+	    r2.PURPOSE,
+	    r2.CAPACITY  
+	FROM
+	    RESERVATION r2
+	JOIN
+	    ROOMS r ON r2.ROOM_ID = r.ROOM_ID 
+	  WHERE
+	    r2.ROOM_ID = #{room_id}	
+	</select>
+	
+	<!-- 로그인한 사용자의 예약 목록 조회 (예약자 또는 참여자인 경우) -->
+	<select id="getReservationList" parameterType="string" resultType="reservationDto">
+	SELECT DISTINCT 
+		r.RESERVATION_ID, 
+		r.ROOM_NAME, 
+		r.RESERVER, 
+		r.MEMBER, 
+		r.RESERVATION_DATE, 
+		r.RESERVATION_TIME, 
+		r.PURPOSE
+    FROM RESERVATION r
+    LEFT JOIN RESERVATION_PARTICIPANT rp ON r.RESERVATION_ID = rp.RESERVATION_ID
+    WHERE r.RESERVATION_ID IN ( SELECT
+	RESERVATION_ID
 FROM
-    RESERVATION r2
-JOIN
-    ROOMS r ON r2.ROOM_ID = r.ROOM_ID 
-  WHERE
-    r2.ROOM_ID = #{room_id}	
+	RESERVATION r
+WHERE
+	 INSTR(MEMBER , #{empno}) > 0 OR  RESERVER = #{empno})
+    ORDER BY r.RESERVATION_DATE DESC, r.RESERVATION_TIME ASC
+	
 	</select>
 
 	<!-- 예약자와 참여자 조회 -->
 	<select id="selectReserverAndMember" resultType="reservationDto">
-	SELECT
-		e.NAME AS RESERVER,
-		r.MEMBER
-	FROM
-		RESERVATION_PARTICIPANT rp
-	JOIN
-		RESERVATION r ON rp.RESERVATION_ID = r.RESERVATION_ID
-	LEFT JOIN
-		EMPLOYEES e ON rp.EMPNO = e.EMPNO 
-	WHERE
-		r.RESERVATION_ID = #{reservation_id}
+		SELECT
+			e.EMPNO AS RESERVER,
+			r.MEMBER,
+			r.RESERVATION_ID
+		FROM
+			RESERVATION r
+		LEFT JOIN
+			EMPLOYEES e ON r.RESERVER = e.EMPNO
+		WHERE
+			r.RESERVATION_ID = #{reservation_id}
 	</select>
 	
 	<!-- 예약삭제 (예약자 본인 예약내역만 삭제) -->
@@ -64,28 +85,28 @@ JOIN
 		#{reservation_id}
 		AND RESERVER = #{reserver}
 	</delete>
-	
-<select id="selectrooms" resultType="reservationDto">
-    SELECT r2.RESERVATION_ID,
-           r.ROOM_ID,
-           TO_CHAR(r2.RESERVATION_DATE, 'YYYY-MM-DD') AS RESERVATION_DATE,
-           r2.RESERVATION_TIME,
-           r2.RESERVER,
-           r2."MEMBER",
-           r2.PURPOSE
-    FROM RESERVATION r2
-    JOIN ROOMS r ON r2.ROOM_ID = r.ROOM_ID
-    WHERE r2.RESERVATION_DATE = 
-        TO_DATE(
-            <if test="date != null">
-                #{date}
-            </if>
-            <if test="date == null">
-                TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
-            </if>, 
-        'YYYY-MM-DD') AND r.USE_YN = 'Y'
-    ORDER BY r2.RESERVATION_DATE, r2.RESERVATION_TIME
-</select>
+	<!-- 선택한 날짜의 예약된 회의실 정로 조회 -->
+	<select id="selectrooms" resultType="reservationDto">
+	    SELECT r2.RESERVATION_ID,
+	           r.ROOM_ID,
+	           TO_CHAR(r2.RESERVATION_DATE, 'YYYY-MM-DD') AS RESERVATION_DATE,
+	           r2.RESERVATION_TIME,
+	           r2.RESERVER,
+	           r2."MEMBER",
+	           r2.PURPOSE
+	    FROM RESERVATION r2
+	    JOIN ROOMS r ON r2.ROOM_ID = r.ROOM_ID
+	    WHERE r2.RESERVATION_DATE = 
+	        TO_DATE(
+	            <if test="date != null">
+	                #{date}
+	            </if>
+	            <if test="date == null">
+	                TO_CHAR(CURRENT_DATE, 'YYYY-MM-DD')
+	            </if>, 
+	        'YYYY-MM-DD') AND r.USE_YN = 'Y'
+	    ORDER BY r2.RESERVATION_DATE, r2.RESERVATION_TIME
+	</select>
 	
 <select id="reservationList" resultType="reservationDto">
 SELECT

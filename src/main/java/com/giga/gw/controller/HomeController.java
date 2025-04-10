@@ -26,7 +26,7 @@ public class HomeController {
 
 	@GetMapping("/")
 	public String home() {
-		return "redirect:/index.do";
+		return "index";
 	}
 
 	@GetMapping("/index.do")

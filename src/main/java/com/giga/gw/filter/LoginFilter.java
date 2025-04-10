@@ -19,7 +19,7 @@ public class LoginFilter implements Filter {
 
     private static final AntPathMatcher pathMatcher = new AntPathMatcher();
     private static final List<String> EXCLUDED_PATHS = Arrays.asList(
-            "/login.do",
+            "/loginForm.do",
             "/employee/findEmployee.do",
             "/employee/findEmpno.do",
             "/resources/**"
@@ -48,7 +48,7 @@ public class LoginFilter implements Filter {
 
         if (loginDto == null) {
             log.warn("로그인 정보 없음 : {}", path);
-            res.sendRedirect("/login.do");
+            res.sendRedirect("/loginForm.do");
             return;
         }
 

@@ -1,12 +1,11 @@
 package com.giga.gw.repository;
 
-import java.util.List;
-import java.util.Map;
-
+import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -60,6 +59,12 @@ public class AttendanceDaoImpl implements IAttendanceDao {
 	    System.out.println(employeeAttendancelist);
 	    
 	    return employeeAttendancelist;
+	}
+	
+	@Override
+	public List<Map<String, Object>> selectemployeeLeave(String empno) {
+		
+		return sessionTemplate.selectList(NS + "selectemployeeLeave", empno);
 	}
 
 }

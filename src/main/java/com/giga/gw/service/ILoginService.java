@@ -8,5 +8,4 @@ public interface ILoginService {
 	
 	EmployeeDto login(String empno);
 	String findEmpnoByNameAndEmail(Map<String, Object> map);
-
 }

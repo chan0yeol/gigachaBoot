@@ -1,5 +1,6 @@
 package com.giga.gw.controller;
 
+import com.giga.gw.dto.EmployeeDto;
 import com.giga.gw.service.ILoginService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -50,7 +51,7 @@ public class LoginController {
 		// TODO /login.do
 //		EmployeeDto employeeDto = loginService.login(map);
 //		System.out.println(employeeDto);
-
+//
 //		if(employeeDto == null) {
 //
 //			return "login";
@@ -64,13 +65,13 @@ public class LoginController {
         return "redirect:/";
 	}
 	
-//	@GetMapping("/logout.do")
-//	public String logout(HttpSession session) {
-////		EmployeeDto dto = (EmployeeDto)session.getAttribute("loginDto");
-////		session.removeAttribute("loginDto");
-//		session.invalidate(); // 세션 초기화
-//		return "redirect:/login.do";
-//	}
+	@GetMapping("/logout.do")
+	public String logout(HttpSession session) {
+		EmployeeDto dto = (EmployeeDto)session.getAttribute("loginDto");
+		session.removeAttribute("loginDto");
+		session.invalidate(); // 세션 초기화
+		return "redirect:/login.do";
+	}
 	
 	@PostMapping("/findEmpno.do")
 	@ResponseBody
@@ -109,9 +110,9 @@ public class LoginController {
 //	        }
 //	    }
 	// 세션 만료 or 중복로그인 시 이동할 페이지
-//	@GetMapping("/expried.do")
-//	public String expried() {
-//		return "error/expried";
-//	}
+	@GetMapping("/expried.do")
+	public String expried() {
+		return "error/expried";
+	}
 
 }

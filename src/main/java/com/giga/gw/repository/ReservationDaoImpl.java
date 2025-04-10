@@ -1,15 +1,13 @@
 package com.giga.gw.repository;
 
-import java.util.List;
-import java.util.Map;
-
+import com.giga.gw.dto.ReservationDto;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.collections4.map.HashedMap;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.giga.gw.dto.ReservationDto;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -27,6 +25,11 @@ public class ReservationDaoImpl implements IReservationDao{
 	public ReservationDto selectReservationByRoomId(String room_id) {
 		return sessionTemplate.selectOne(NS+"selectReservationByRoomId",room_id);
 	}
+	
+	@Override
+	public List<ReservationDto> getReservationList(String empno) {
+		return sessionTemplate.selectList(NS+"getReservationList",empno);
+	}	
 
 	@Override
 	public ReservationDto selectReserverAndMember(String reservation_id) {
@@ -50,6 +53,6 @@ public class ReservationDaoImpl implements IReservationDao{
 	@Override
 	public List<ReservationDto> reservationList() {
 		return sessionTemplate.selectList(NS+"reservationList");
-	}	
+	}
 
 }

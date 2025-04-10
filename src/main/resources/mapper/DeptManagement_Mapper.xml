@@ -49,26 +49,36 @@
   
   <!-- 상위부서 조회 -->
   <select id="hqSelect" resultType="DepartmentDto">
-  SELECT DEPTNO, DEPTNAME 
+ 	SELECT DEPTNO, DEPTNAME 
+		FROM DEPARTMENTS
+		WHERE PARENT_DEPTNO IS NULL
+		ORDER BY DEPTNAME
+  </select>
+  
+   <!-- 하위부서 조회 -->
+  <select id="deptSelect" resultType="DepartmentDto">
+  SELECT DEPTNO, DEPTNAME
 	FROM DEPARTMENTS
-	WHERE PARENT_DEPTNO IS NULL
+	WHERE PARENT_DEPTNO IS NOT NULL
 	ORDER BY DEPTNAME
   </select>
   
   <!-- 부서 수정 -->
-  <update id="updateDepartment">
-  	UPDATE DEPARTMENTS
-  	<set>
-  		<if test="deptname != null and deptname != ''">
-  			DEPTNAME = #{deptname}
-  		</if>
-  		<if test="parent_deptno != null and parent_deptno != ''">
-  			PARENT_DEPTNO = #{parent_deptno}
-  		</if>
-  		UPDATE_DATE=TO_DATE(TO_CHAR(SYSDATE, 'YY-MM-DD')), UPDATE_EMP=#{update_emp}
-  	</set>
-		WHERE DEPTNO=#{deptno}
-  </update>
+<update id="updateDept">
+    UPDATE DEPARTMENTS
+    <set>
+        <if test="deptname != null and deptname != ''">
+            DEPTNAME = #{deptname},
+        </if>
+        <if test="parent_deptno != null and parent_deptno != ''">
+            PARENT_DEPTNO = #{parent_deptno},
+        </if>
+        UPDATE_DATE = SYSDATE,
+        UPDATE_EMP = #{update_emp}
+    </set>
+    WHERE DEPTNO = #{deptno}
+</update>
+
   
   <!-- 부서 삭제 -->
   <update id="deleteDepartment">
@@ -112,7 +122,6 @@
 	LEFT JOIN EMPLOYEES e ON d1.UPDATE_EMP = e.EMPNO
 	WHERE d1.DEPTNO = #{deptno}
   </select>
-  
 
   <!-- 부서 검색 -->
   <select id="getSearchDept" resultType="DepartmentDto">
@@ -123,7 +132,6 @@
   </select>
   
  
-  
   <!-- 삭제된 부서 조회 -->
   <select id="getDeletedDept" resultType="DepartmentDto">
   	SELECT DEPTNO, DEPTNAME, PARENT_DEPTNO, USE_YN, CREATE_DATE, UPDATE_DATE, CREATE_EMP, UPDATE_EMP
