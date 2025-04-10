@@ -38,7 +38,7 @@ public class SecurityConfig {
                         login
                                 .loginPage("/loginForm.do") // 사용자 로그인 화면
                                 .loginProcessingUrl("/login.do") // submit을 처리할 요청 주소
-                                .usernameParameter("empno") // 아이docker 디 입력 name값
+                                .usernameParameter("empno") // 아이디 입력 name값
                                 .passwordParameter("password") // 비밀번호 입력 name 값
                                 .defaultSuccessUrl( "/index.do",true)
                                 .successHandler((request, response, authentication) -> {
@@ -49,7 +49,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(request -> // 요청을 forward Dispatcher에 대한 허용
                         request.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll() // Dispatcher에 대한 요청 모두 허용
-                                .requestMatchers("/css/**","/expried.do","/","/loginForm.do").permitAll() // /images 안의 모든 요청 허용
+                                .requestMatchers("/css/**","/expried.do","/loginForm.do").permitAll() // /images 안의 모든 요청 허용
                                 .requestMatchers("/approval/manager*.do").hasRole("A") // /approval/manager* 로시작하는 모든 요청 권한이 ROLE_A
                                 .anyRequest().authenticated() // 모든 요청에 대한 인증을 필요
                 )

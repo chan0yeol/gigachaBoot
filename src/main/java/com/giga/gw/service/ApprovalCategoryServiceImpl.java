@@ -44,4 +44,9 @@ public class ApprovalCategoryServiceImpl implements IApprovalCategoryService{
 	public List<ApprovalCategoryDto> categorySelectAll() {
 		return approvalCategoryDao.categorySelectAll();
 	}
+
+	@Override
+	public int cntCategoryAll() {
+		return approvalCategoryDao.cntCategoryAll();
+	}
 }

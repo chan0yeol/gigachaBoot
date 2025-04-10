@@ -11,6 +11,7 @@ public interface IApprovalDao {
 	List<Map<String, Object>> getDepartments();
     List<Map<String, Object>> getEmployeesByDepartment();
     List<Map<String, Object>> getOrganizationTree();
+    List<Map<String, Object>> getOrganizationTree(String empno);
     int editorSave(String content);
     String editorRead();
     
@@ -38,6 +39,7 @@ public interface IApprovalDao {
     List<Map<String, Object>> postLeaveToCalendar(String empno);
     
     int insertApprovalReferences(Map<String, Object> references);
+    
     Map<String, Object> selectApprovalLineStats (String empno);
     Map<String, Object> selectApprovalStats (String empno);
 }

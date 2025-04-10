@@ -97,20 +97,64 @@
 	            </div>
 	         </div>
 		</div>
+
+		<div>
+			<ul class="pagination justify-content-center">
+				<!-- 앞에 조건에 따른 이동 표시 << <   -->
+				<c:if test="${page.page > page.countPage}">
+					<li class="page-item">
+						<a class="page-link" href="./formList.do?page=1">&lt;&lt;</a>
+					</li>
+				</c:if>
+				<c:if test="${page.page > 1 }">
+					<c:choose>
+						<c:when test="${(page.stagePage - page.countPage) < 0}">
+							<li class="page-item">
+								<a class="page-link" href="./formList.do?page=1">&lt;</a>
+							</li>
+						</c:when>
+						<c:otherwise>
+							<li class="page-item">
+								<a class="page-link" href="./formList.do?page=${(page.stagePage - page.countPage)}">&lt;</a>
+							</li>
+						</c:otherwise>
+					</c:choose>
+				</c:if>
+				<!-- 페이지 이동 숫자 -->
+				  <c:forEach var="i" begin="${page.stagePage}" end="${page.endPage}" step="1">
+				  	<li  ${i == page.page ?"class='page-item active'":"class='page-item'" }>
+						<a class="page-link" href="./formList.do?page=${i}">${i}</a>
+				  	</li>
+				  </c:forEach>
+				<!-- 뒤에 조건에 따른 이동 표시 > >>   -->
+				<fmt:parseNumber var="num1" integerOnly="true" value="${(page.totalPage-1)/page.countPage}" />
+				<fmt:parseNumber var="num2" integerOnly="true" value="${(page.page-1)/page.countPage}"  />
+				<c:if test="${num1>num2}">
+					<li class="page-item">
+						<a class="page-link" href="./formList.do?page=${page.stagePage+page.countPage}">&gt;</a>
+				  	</li>
+				</c:if>
+				<c:if test="${page.endPage<page.totalPage}">
+					<li class="page-item">
+						<a class="page-link" href="./formList.do?page=${page.totalPage}">&gt;&gt;</a>
+				  	</li>
+				</c:if>
+			</ul>
+		</div>
 	</div>
 </main>
 <div class="modal" id="formDetailModal" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-scrollable">
         <div class="modal-content">
-            
+
             <div class="modal-header">
-                <h5 class="modal-title">양식 상세</h5>
+                <!--  <h5 class="modal-title">양식 상세</h5>-->
                 <c:if test="${loginDto.auth eq 'A'}">
 					<button id="updateBtn" class="btn btn-secondary mb-3 btn-sm">양식수정</button>
 				</c:if>
                 <button type="button" class="btn-close modalCloseBtn" data-bs-dismiss="modal"></button>
             </div>
-            
+
             <div class="modal-body">
                 <h4 id="modal_form_name"></h4>
                 <div id="modal_viewer"></div>
@@ -119,7 +163,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger modalCloseBtn" data-bs-dismiss="modal">닫기</button>
             </div>
-            
         </div>
     </div>
 </div>

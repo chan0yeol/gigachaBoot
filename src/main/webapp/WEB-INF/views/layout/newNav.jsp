@@ -10,7 +10,7 @@
 <body>
 <header id="header" class="header fixed-top d-flex align-items-center">
     <div class="d-flex align-items-center justify-content-between">
-      <a href="${pageContext.request.contextPath}" class="logo d-flex align-items-center">
+      <a href="${pageContext.request.contextPath}/" class="logo d-flex align-items-center">
         <img src="assets/img/logo.png" alt="">
         <span class="d-none d-lg-block">GIGACOMPANY</span>
       </a>
@@ -24,16 +24,16 @@
       <ul class="d-flex align-items-center">
         <li class="nav-item dropdown pe-3">
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="d-none d-md-block dropdown-toggle ps-2">인사관리</span> 
+            <span class="d-none d-md-block dropdown-toggle ps-2">인사관리</span>
           </a><!-- End Profile Iamge Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/deptManagement/deptManagement.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/deptManagement/deptManagement.do">
 				<span>부서 관리</span></a></li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/notice/notice.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/notice/notice.do">
 				<span>공지사항</span></a></li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/hrManagement/employeeAdd.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/hrManagement/employeeAdd.do">
 				<span>인사등록</span></a></li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/hrManagement/mypage.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/hrManagement/mypage.do">
 				<span>마이페이지</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
           </ul>
@@ -43,13 +43,13 @@
             <span class="d-none d-md-block dropdown-toggle ps-2">근태관리</span>
           </a><!-- End Profile Iamge Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/myattendance.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/myattendance.do">
 				<span>나의 근태 현황</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/attendance.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/attendance.do">
 				<span>부서 근태 현황</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/leaveattendance.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/attendance/leaveattendance.do">
 				<span>부서 연차 현황</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
           </ul>
@@ -64,17 +64,17 @@
             <span class="d-none d-md-block dropdown-toggle ps-2">전자결재</span>
           </a><!-- End Profile Iamge Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalDocument.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalDocument.do">
 				<span>기안 작성</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalRequestList.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalRequestList.do">
 				<span>결재목록</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalList.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/approvalList.do">
 				<span>결재요청함</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
             <c:if test="${loginDto.auth eq 'A'}">
-	            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/formList.do"> 
+	            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/approval/formList.do">
 					<span>문서양식</span></a></li>
 	            <li> <hr class="dropdown-divider"> </li>
            </c:if>
@@ -85,32 +85,40 @@
             <span class="d-none d-md-block dropdown-toggle ps-2">예약</span>
           </a><!-- End Profile Iamge Icon -->
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservation.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservation.do">
 				<span>회의실 예약</span></a></li>
             <li> <hr class="dropdown-divider"> </li>
-            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservationList.do"> 
+            <li><a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservationList.do">
 				<span>예약내역조회</span></a></li>
-            <li> <hr class="dropdown-divider"> </li>         
+            <li> <hr class="dropdown-divider"> </li>
           </ul>
-        </li>      
+        </li>
         <c:if test="${loginDto.auth == 'A'}">
-<!--          <li class="nav-item dropdown pe-3"> -->
+         <li class="nav-item dropdown pe-3">
          		<a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown" aria-expanded="false">
             		<span class="d-none d-md-block dropdown-toggle ps-2">관리자</span>
           		</a><!-- End Profile Iamge Icon -->
           	<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile" style="">
             <li>
-            	<a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/roomList.do"> 
+            	<a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/roomList.do">
 					<span>회의실정보 리스트</span>
 				</a>
-				<a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservationList.do"> 
+				<a class="dropdown-item d-flex align-items-center" href="${pageContext.request.contextPath}/rooms/reservationList.do">
 					<span>전체회의실내역조회</span>
 				</a>
 			</li>
-      		</ul>
-		</c:if>
-    </nav>
 
+
+      		</ul>
+          </c:if>
+          <li class="nav-item pe-3" style="maring-right:10px;">
+              <a class="nav-link nav-profile d-flex align-items-center pe-0" href="${pageContext.request.contextPath}/logout.do">
+                  <span class="d-none d-md-block">로그아웃</span>
+                  <img src="https://cdn3.iconfinder.com/data/icons/user-interface-169/32/logout-16.png" alt="">
+              </a><!-- End Profile Iamge Icon -->
+          </li>
+      </ul>
+    </nav>
   </header>
   <!-- TODO 00207 Socket - 웹소켓 알림 표시될 Div   -->
   <div id="toast-container" style="
@@ -146,7 +154,7 @@
   			document.body.className= "";
   			sideIsc = true;
   		}
-  		
+
   	});
   </script>
 </body>

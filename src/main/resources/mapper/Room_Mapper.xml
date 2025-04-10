@@ -9,23 +9,43 @@
 <!-- 		'18:00', TO_DATE(CREATED_AT, 'YYYY-MM-DD'), TO_DATE(UPDATED_AT, 'YYYY-MM-DD'),'Y', #{image_url}) -->
 	INSERT INTO ROOMS (ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS,
 		CLOSE_HOURS, CREATED_AT, USE_YN, IMAGE_URL)
-	VALUES ('ROOM' || LPAD(SEQ_ROOM_ID.NEXTVAL,3,'0'), #{room_name}, 7, '09:00',
+	VALUES ('ROOM' || LPAD(SEQ_ROOM_ID.NEXTVAL,3,'0'), #{room_name}, #{capacity}, '08:00',
 		'18:00', TO_DATE(CURRENT_DATE, 'YYYY-MM-DD'), 'Y', #{image_url})
 	</insert>
 	
 	<!-- 전체 회의실 조회 -->
-	<select id="selectAllRooms" resultType="RoomDto">
+ <select id="selectAllRooms" resultType="RoomDto">
 	SELECT ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, CLOSE_HOURS, 
-           TO_CHAR(CREATED_AT,'YYYY-MM-DD') AS CREATED_AT, TO_CHAR(UPDATED_AT,'YYYY-MM-DD') AS UPDATED_AT, USE_YN, IMAGE_URL
+           TO_CHAR(CREATED_AT,'YYYY-MM-DD') AS CREATED_AT, 
+           TO_CHAR(UPDATED_AT,'YYYY-MM-DD') AS UPDATED_AT, 
+           USE_YN, IMAGE_URL
     FROM ROOMS
     ORDER BY ROOM_ID
 	</select>
+	
 	<select id="selectUseAllRooms" resultType="RoomDto">
 	SELECT ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, CLOSE_HOURS, 
-           TO_CHAR(CREATED_AT,'YYYY-MM-DD') AS CREATED_AT, TO_CHAR(UPDATED_AT,'YYYY-MM-DD') AS UPDATED_AT, USE_YN, IMAGE_URL
+           TO_CHAR(CREATED_AT,'YYYY-MM-DD') AS CREATED_AT, 
+           TO_CHAR(UPDATED_AT,'YYYY-MM-DD') AS UPDATED_AT, 
+           USE_YN, IMAGE_URL
     FROM ROOMS WHERE USE_YN = 'Y'
     ORDER BY ROOM_ID
-	</select>
+	</select> 
+	
+	<!--<select id="selectRooms" resultType="RoomDto">
+	    SELECT ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, CLOSE_HOURS, 
+	           TO_CHAR(CREATED_AT,'YYYY-MM-DD') AS CREATED_AT, 
+	           TO_CHAR(UPDATED_AT,'YYYY-MM-DD') AS UPDATED_AT, 
+	           USE_YN, IMAGE_URL
+	    FROM ROOMS
+	    <where>
+		        <if test="useYn != null">
+		            AND USE_YN = #{useYn}
+		        </if>
+	    </where>
+    	ORDER BY ROOM_ID
+ 	</select>-->
+	
 	<!-- 특정 회의실 조회 -->
     <select id="selectRoomById" parameterType="map" resultType="RoomDto">
 	SELECT ROOM_ID, ROOM_NAME, CAPACITY, OPEN_HOURS, CLOSE_HOURS,

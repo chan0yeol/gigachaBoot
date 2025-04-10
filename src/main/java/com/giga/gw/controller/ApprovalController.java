@@ -1,9 +1,6 @@
 package com.giga.gw.controller;
 
-import com.giga.gw.dto.ApprovalCategoryDto;
-import com.giga.gw.dto.ApprovalDto;
-import com.giga.gw.dto.ApprovalFormDto;
-import com.giga.gw.dto.EmployeeDto;
+import com.giga.gw.dto.*;
 import com.giga.gw.repository.IApprovalDao;
 import com.giga.gw.repository.IEmployeeDao;
 import com.giga.gw.service.IApprovalCategoryService;
@@ -19,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +30,7 @@ public class ApprovalController {
     private final IApprovalCategoryService approvalCategoryService;
     private final IApprovalFormService approvalFormService;
     private final IApprovalService approvalService;
-
+    private final PageDto pageDto;
     @GetMapping("/index.do")
     public String apprIndex() {
         return "approval";
@@ -116,8 +114,29 @@ public class ApprovalController {
     // TODO 00101 전자결재 문서양식 Controller
     // 문서양식 리스트 조회
     @GetMapping("/formList.do")
-    public String approvalForm(Model model) {
-        List<ApprovalFormDto> formList = approvalFormService.formSelectAll();
+    public String approvalForm(@RequestParam(value="page", defaultValue = "1" ) String page, Model model, HttpSession session) {
+        int selPage = Integer.parseInt(page);
+        if(selPage <= 0) {
+            selPage = 1;
+        }
+        EmployeeDto loginDto = (EmployeeDto) session.getAttribute("loginDto");
+        if(loginDto.getAuth().equals("A")) {
+            pageDto.setTotalCount(approvalFormService.cntFormSelectAll());
+        } else {
+            pageDto.setTotalCount(approvalFormService.cntFormSelectUser());
+        }
+        pageDto.setCountList(10);
+        pageDto.setCountPage(5);
+        pageDto.setTotalPage(0);
+
+        pageDto.setPage(selPage);
+        pageDto.setStagePage(0);
+        pageDto.setEndPage(0);
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("first", pageDto.getPage()*pageDto.getCountList() - (pageDto.getCountList()-1) ); // (2*10) - (10-1) = 11
+        map.put("last", pageDto.getPage()*pageDto.getCountList());
+        List<ApprovalFormDto> formList = approvalFormService.formSelectAll(map);
+        model.addAttribute("page", pageDto);
         model.addAttribute("formList", formList);
         return "approvalFormList";
     }

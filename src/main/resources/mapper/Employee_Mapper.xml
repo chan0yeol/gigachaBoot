@@ -23,6 +23,60 @@
 		WHERE EMPNO = #{empno} AND GUBUN = '1' AND USE_YN = 'Y'
 	</select>
 	
+	 <!-- 다음 사번 가져오기 -->
+    <select id="getNextEmpno" parameterType="String" resultType="string">
+        SELECT 
+		TO_CHAR(TO_DATE(#{hiredate}, 'YYYY-MM-DD'), 'YYMM') || 
+		LPAD(NVL(MAX(TO_NUMBER(SUBSTR(empno, 5))), 0) + 1, 3, '0') AS EMPNO 
+		FROM employees
+  		WHERE SUBSTR(empno, 1, 4) = TO_CHAR(TO_DATE(#{hiredate}, 'YYYY-MM-DD'), 'YYMM') 
+    </select>
+    
+    <!-- 사원 등록 -->
+    <insert id="insertEmployee">
+        INSERT INTO EMPLOYEES
+        (EMPNO, DEPTNO, JOB_ID, NAME,
+        EMAIL, PASSWORD, PHONE,
+        TEL, HIREDATE, BIRTHDAY,
+        GENDER, SCHOOL, MAJOR_CODE,
+        "DEGREE", ADRESS, AUTH, CREATE_DATE, CREATE_EMP, HR_STATUS, USE_YN)
+        VALUES
+        (#{empno}, #{deptno}, #{job_id}, #{name},
+        #{email}, #{password}, #{phone},
+        #{tel}, TO_DATE(#{hiredate}, 'YYYY-MM-DD'), TO_DATE(#{birthday}, 'YYYY-MM-DD'),
+        #{gender}, #{school}, #{major_code},
+        #{degree}, #{adress}, 'U', TO_DATE(SYSDATE, 'YYYY-MM-DD'), #{create_emp},
+        'HS02', 'Y')
+    </insert>
+    
+    <!-- 사원리스트 조회 -->
+    <select id="employeeList" resultType="EmployeeDto">
+    SELECT EMPNO, NAME, d.DEPTNAME, j.JOB_TITLE , TEL,  EMAIL, HIREDATE
+		FROM EMPLOYEES e JOIN DEPARTMENTS d 
+		ON e.DEPTNO = d.DEPTNO
+		JOIN JOBS j 
+		ON e.JOB_ID = j.JOB_ID
+	</select>
 	
+	<!-- 사원 조회 -->
+	<select id="getEmpno" resultType="EmployeeDto">
+	SELECT EMPNO, NAME, d.DEPTNAME, j.JOB_TITLE , TEL,  EMAIL, HIREDATE
+		FROM EMPLOYEES e JOIN DEPARTMENTS d 
+		ON e.DEPTNO = d.DEPTNO
+		JOIN JOBS j
+		ON e.JOB_ID = j.JOB_ID
+		WHERE EMPNO = #{empno}
+	</select>
 	
+	<!-- 마이페이지 조회 -->
+	<select id="getMypage" resultType="EmployeeDto">
+	SELECT EMPNO, d.DEPTNAME , j.JOB_TITLE , NAME, HIREDATE , TEL, EMAIL
+		FROM EMPLOYEES e JOIN DEPARTMENTS d 
+		ON e.DEPTNO = d.DEPTNO
+		JOIN JOBS j 
+		ON e.JOB_ID = j.JOB_ID
+		WHERE EMPNO = #{empno}
+	</select>
+    
+    
 </mapper>

@@ -6,7 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.List;
 import java.util.Map;
 
-
 @Mapper
 public interface IApprovalCategoryDao {
 	int categoryInsert(ApprovalCategoryDto dto);
@@ -15,4 +14,5 @@ public interface IApprovalCategoryDao {
 	ApprovalCategoryDto categorySelectById(String category_id);
 	int categoryCheck(String category_yname);
 	int categoryUpdateUseYN(Map<String, Object> map);
+	int cntCategoryAll();
 }

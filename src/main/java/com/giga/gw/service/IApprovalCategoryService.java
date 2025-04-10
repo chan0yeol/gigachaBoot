@@ -12,4 +12,5 @@ public interface IApprovalCategoryService {
 	ApprovalCategoryDto categorySelectById(String category_id);
 	int categoryCheck(String category_yname);
 	boolean categoryUpdateUseYN(Map<String, Object> map);
+	int cntCategoryAll();
 }

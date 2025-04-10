@@ -1,14 +1,12 @@
 package com.giga.gw.repository;
 
-import java.util.List;
-import java.util.Map;
-
+import com.giga.gw.dto.DepartmentDto;
+import lombok.RequiredArgsConstructor;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
-import com.giga.gw.dto.DepartmentDto;
-
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Map;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,15 +34,15 @@ public class DeptManagementImpl implements IDeptManagementDao {
 	public List<DepartmentDto> hqSelect() {
 		return session.selectList(NS+"hqSelect");
 	}
-
+	
 	@Override
-	public int updateDept(DepartmentDto dto) {
-		return session.update(NS+"updateDept",dto);
+	public List<DepartmentDto> deptSelect() {
+		return session.selectList(NS+"deptSelect");
 	}
 
 	@Override
-	public int deleteDept(List<String> dto) {
-		return session.update(NS+"deleteDept", dto);
+	public int updateDept(Map<String, Object> map) {
+		return session.update(NS+"updateDept",map);
 	}
 	
 	@Override
@@ -66,6 +64,10 @@ public class DeptManagementImpl implements IDeptManagementDao {
 	public List<DepartmentDto> getDeletedDept() {
 		return session.selectList(NS+"getDeletedDept");
 	}
+
+
+
+
 
 
 

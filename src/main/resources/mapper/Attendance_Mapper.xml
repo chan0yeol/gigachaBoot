@@ -38,6 +38,7 @@ WHERE A.EMPNO IS NULL
         NOCYCLE
 </update>
 
+
 <!--연차 가져오기
 ::: 결재 완료 처리된 휴가 ""해당하는 사원에 한해서""리스트를 전체~!!!! 가져온다.
 -->
@@ -49,6 +50,7 @@ WHERE A.EMPNO IS NULL
 			WHERE t1.EMPNO = #{empno}
 			AND APPROVAL_STATUS = 'ST04'
 			AND FORM_ID LIKE 'BC%'
+			ORDER BY START_DATE DESC
 </select>
 <!--연차 가져오기
 ::: 결재 완료 처리된 휴가 리스트를 """오늘 날짜에 연차인 사람"""""만 가져온다.
@@ -118,7 +120,11 @@ AND ATTNO LIKE CONCAT(#{attno}, '%')
 ORDER BY ATTNO ASC
 </select>
 
-<!---->
-
+<!-- 근태관리 테이블 (부여연차/잔여연차/사용연차) -->
+<select id="selectemployeeLeave" resultType="map">
+	SELECT EMPNO, ANNUAL_LEAVE , ANNUAL_COUNT , (ANNUAL_LEAVE - ANNUAL_COUNT) USE_LEAVE  
+	FROM ATTENDANCE a
+	WHERE EMPNO= #{empno}
+</select>
 
 </mapper>

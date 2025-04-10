@@ -36,8 +36,8 @@ public class ApprovalFormServiceImpl implements IApprovalFormService {
 	}
 
 	@Override
-	public List<ApprovalFormDto> formSelectAll() {
-		return approvalFormDao.formSelectAll();
+	public List<ApprovalFormDto> formSelectAll(Map<String, Object> map) {
+		return approvalFormDao.formSelectAll(map);
 	}
 
 	@Override
@@ -48,5 +48,14 @@ public class ApprovalFormServiceImpl implements IApprovalFormService {
 	@Override
 	public Map<String, Object> formSelectById(String form_id) {
 		return approvalFormDao.formSelectById(form_id);
+	}
+
+	@Override
+	public int cntFormSelectAll() {
+		return approvalFormDao.cntFormSelectAll();
+	}
+	@Override
+	public int cntFormSelectUser() {
+		return approvalFormDao.cntFormSelectUser();
 	}
 }

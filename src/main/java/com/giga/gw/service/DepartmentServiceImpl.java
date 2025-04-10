@@ -1,15 +1,13 @@
 package com.giga.gw.service;
 
+import com.giga.gw.repository.IDepartmentDao;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
-import com.giga.gw.repository.IDepartmentDao;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +29,7 @@ public class DepartmentServiceImpl implements IDepartmentService {
 
             treeData.add(emp);
         }
-        treeData.addAll(departmentList); // 부서 추가
+//        treeData.addAll(departmentList); // 부서 추가
         // treeData.addAll(employeeList);   // 사원 추가
         System.out.println(treeData);
 		return treeData;

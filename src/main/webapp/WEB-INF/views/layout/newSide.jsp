@@ -68,18 +68,36 @@
 </head>
 <body>
 	<aside id="sidebar" class="sidebar">
-	출근사원
-	<div id="connectedUsers"></div>
+<!-- TODO 출근사원 주석처리
+출근사원 -->
+ 	<div id="connectedUsers"></div>
    	<div class="card mb-3 mt-3">
-		<img class="card-img-top"
+   		<c:choose>
+   			<c:when test="${loginDto.empno eq '2504011'}">
+   				<img class="card-img-top"
+			src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcThwNhcnmyw7fy6Ec5P2F62BolMYqalilE9GQ&s"
+			alt="Card image cap" width="249" height="249">
+   			</c:when>
+   			<c:when test="${loginDto.empno eq '2504012'}">
+	   			<img class="card-img-top"
+				src="https://cphoto.asiae.co.kr/listimglink/1/2017101714512891728_2.jpg"
+				alt="Card image cap" width="249" height="249">
+   			</c:when>
+   			<c:otherwise>
+   				<img class="card-img-top"
 			src="https://yt3.googleusercontent.com/xydasbAktJl4OMRQGV2mEy1Rvf5Y9miqlmVsdIR0Y14rm3fHCOstsYmMlD8MLm7PletRrJr_FiI=s160-c-k-c0x00ffffff-no-rj"
-			alt="Card image cap">
+			alt="Card image cap" width="249" height="249">
+   			</c:otherwise>
+   		</c:choose>
+
 		<div class="sidecard-body" >
-  			<span class="employee-name">${loginDto.name}</span>
+  			<span class="employee-name" style='color: black;'><a href="${pageContext.request.contextPath}/hrManagement/mypage.do" style="color: black;">${loginDto.name}</a></span>
   			<span class="employee-id">사원번호 | ${loginDto.empno}</span>
 <!--   			<div class="employee-info-row"> -->
-    			<span class="department" id="dept">${loginDto.deptname}</span>
-    			<span class="job-title" id="job">${loginDto.job_title}</span>
+<%--     			<span class="department" id="dept">${loginDto.deptname}</span> --%>
+<%--     			<span class="job-title" id="job">${loginDto.job_title}</span> --%>
+
+    			<span class="department mb-3">${loginDto.deptname} | ${loginDto.job_title}</span>
 <!--  			 </div> -->
 		</div>
 	</div>
@@ -165,24 +183,29 @@
         </ul>
       </li>
       <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#res-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
+        <a class="nav-link collapsed" data-bs-target="#emp-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
           <i class="bi bi-calendar2-plus"></i>
           <span>인사</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
-        <ul id="res-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav" style="">
-         <li>
-            <a href="${pageContext.request.contextPath}/hrManagement/employeeAdd.do">
-              <span>사원등록</span>
-            </a>
-          </li> 
+        <ul id="emp-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav" style="">
           <li>
-            <a href="${pageContext.request.contextPath}/deptManagement/deptManagement.do">
-              <span>부서관리</span>
-            </a>
+           		<a href="${pageContext.request.contextPath}/hrManagement/employeeAdd.do">
+              		<span>사원등록</span>
+            	</a>
+          </li>
+          <li>
+            	<a href="${pageContext.request.contextPath}/deptManagement/deptManagement.do">
+              		<span>부서관리</span>
+            	</a>
+          </li>
+          <li>
+            	<a href="${pageContext.request.contextPath}/hrManagement/hrManagement.do">
+              		<span>인사관리</span>
+            	</a>
           </li>
         </ul>
-      </li>
-      
+	</li>
+
      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#res-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
           <i class="bi bi-calendar2-plus"></i>
@@ -193,7 +216,7 @@
             <a href="${pageContext.request.contextPath}/rooms/reservation.do">
               <span>회의실예약</span>
             </a>
-          </li> 
+          </li>
           <li>
             <a href="${pageContext.request.contextPath}/rooms/reservationList.do">
               <span>회의실예약내역조회</span>
@@ -201,7 +224,7 @@
           </li>
         </ul>
       </li>
- 
+
      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#attendance-nav" data-bs-toggle="collapse" href="#" aria-expanded="false">
           <i class="bi bi-calendar2-week"></i>
@@ -213,17 +236,6 @@
           <li>
             <a href="${pageContext.request.contextPath}/attendance/myattendance.do">
               <span>나의 근태 현황</span>
-            </a>
-          </li>
-          <li class="nav-heading">부서 근태 관리</li>
-             <li>
-            <a href="${pageContext.request.contextPath}/attendance/attendance.do">
-              <span>부서 근태 현황</span>
-            </a>
-          </li>
-             <li>
-            <a href="${pageContext.request.contextPath}/attendance/leaveattendance.do">
-              <span>나의 연차 현황</span>
             </a>
           </li>
         </ul>
