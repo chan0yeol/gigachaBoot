@@ -42,4 +42,6 @@ public interface IApprovalDao {
     
     Map<String, Object> selectApprovalLineStats (String empno);
     Map<String, Object> selectApprovalStats (String empno);
+    int deadlineRejectAuto();
+    int deadlineLineRejectAuto();
 }

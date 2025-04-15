@@ -538,4 +538,25 @@
 		FROM APPROVAL
 		WHERE EMPNO = #{empNo}
 	</select>
+	<!-- 결재문서 마감 자동반려처리 -->
+	<update id="deadlineRejectAuto">
+		 <![CDATA[
+		UPDATE APPROVAL
+		SET APPROVAL_STATUS = 'ST05'
+		WHERE APPROVAL_DEADLINE < TRUNC(SYSDATE)
+		AND APPROVAL_STATUS IN ('ST02','ST03')
+		]]>
+	</update>
+	<update id="deadlineLineRejectAuto">
+		 <![CDATA[
+		UPDATE APPROVAL_LINE
+		SET STATUS_ID = 'ST05', REJECT_REASON = '결재 기한 만료'
+		WHERE APPROVAL_ID IN (SELECT APPROVAL_ID
+							  FROM APPROVAL
+							  WHERE APPROVAL_DEADLINE < TRUNC(SYSDATE)
+								AND APPROVAL_STATUS IN ('ST02','ST03'))
+		  AND STATUS_ID IN ('ST02','ST03')
+		]]>
+	</update>
+
 </mapper>

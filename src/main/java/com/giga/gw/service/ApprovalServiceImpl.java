@@ -11,6 +11,7 @@ import com.giga.gw.repository.IFileDao;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.map.HashedMap;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -243,6 +244,16 @@ public class ApprovalServiceImpl implements IApprovalService {
 	@Override
 	public Map<String, Object> selectApprovalStats(String empno) {
 		return approvalDao.selectApprovalStats(empno);
+	}
+
+	@Transactional
+	@Scheduled(cron = "0 0 3 * * *")
+//	@Scheduled(cron = "0 * * * * *") // 매 1분마다 실행
+	@Override
+	public void deadlineRejectAuto() {
+		log.info("크론실행");
+		approvalDao.deadlineRejectAuto();
+		approvalDao.deadlineLineRejectAuto();
 	}
 
 }
