@@ -1,8 +1,8 @@
 # 📌 그룹웨어 기반의 전자결재 및 예약관리 시스템
 ### MVC프로젝트
   https://github.com/gigachanyeol/gigacha
-### 최종 산출물
-  https://drive.google.com/drive/folders/1k6ZlpR3hWTHIt6pSTNVf7SvRY1wnuoG_
+### 프로젝트 산출물
+  <https://drive.google.com/drive/folders/1k6ZlpR3hWTHIt6pSTNVf7SvRY1wnuoG_>
   
 ## 📝 프로젝트 개요
 
