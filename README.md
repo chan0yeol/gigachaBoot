@@ -51,7 +51,7 @@
 
 ## 🧱 시스템 아키텍처
 
-![image.png](attachment:a26f80b6-bd0a-4750-84de-98f9950d933c:image.png)
+![Image](https://github.com/user-attachments/assets/9f94cba4-89b0-40d0-ac77-4d71c33138f5)
 
 - Spring MVC 구조 기반: `Interceptor`, `DispatcherServlet`, `@Service`, `@Repository` 활용
 - JSP + REST API 기반 클라이언트 구성
@@ -74,12 +74,14 @@
 
 Oracle ATP 기반의 테이블 구성 ()
 
-![image.png](attachment:59e98ca1-c84a-454c-9cb2-ad98f7a3cd85:image.png)
+![Image](https://github.com/user-attachments/assets/eea0fff1-ce9c-49d1-b79f-e772f4b5018e)
 
 ---
 ## 🗂 물리 ERD (전자결재 시스템)
 
-![image.png](attachment:59e98ca1-c84a-454c-9cb2-ad98f7a3cd85:image.png)
+물리 ERD는 담당 ERD만 첨부하였습니다.
+
+![Image](https://github.com/user-attachments/assets/8669fb63-a9bb-4398-9351-adcb9e391fdc)
 
 ---
 
@@ -98,7 +100,7 @@ Oracle ATP 기반의 테이블 구성 ()
 
 ### 📌 CI/CD 아키텍처
 
-![image.png](attachment:c85dc38b-bbb4-435e-8372-8c5abfbc0218:image.png)
+![Image](https://github.com/user-attachments/assets/3370f976-6ff1-4825-a6ac-594624449628)
 
 1. GitHub Commit & Push
 2. Jenkins Webhook 트리거
@@ -134,7 +136,7 @@ Oracle ATP 기반의 테이블 구성 ()
 3. 알림 대상 사용자에게 메시지 전송
 4. 클라이언트 토스트 팝업으로 실시간 반영
 
-![image.png](attachment:8a232e1d-6f79-4a39-a116-194eb624567b:image.png)
+![Image](https://github.com/user-attachments/assets/a4c80afe-1b79-448a-a93a-66b371611163)
 
 **설정 예시 (XML 기반)**
 
