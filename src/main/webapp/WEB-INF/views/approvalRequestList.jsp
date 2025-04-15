@@ -137,9 +137,9 @@
                     </tr>
                     <tr>
                         <th>기안자</th>
-                        <td>{{empno}}</td>
+                        <td>{{name}}</td>
                         <th>부서</th>
-                        <td>{{deptno}}</td>
+                        <td>{{dname}}</td>
                     </tr>
                     <tr>
                         <th>참조자</th>
@@ -286,6 +286,8 @@
 									start_date: data1.start_date,
 									end_date: data1.end_date,
 									empno: data1.empno,
+									name: data1.name,
+									dname:data1.dname,
 									deptno: data1.deptno,
 									update_empno: data1.update_empno,
 									showDateRange: data1.form_id?.startsWith('BC'), // 날짜 범위 표시 여부

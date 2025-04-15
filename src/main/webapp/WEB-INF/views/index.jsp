@@ -321,7 +321,7 @@
 			},
 			searching: false,
 			columns: [
-				{ data: 'NAME' },
+				{ data: 'NAME', defaultContent: ''  },
 				{ data: 'APPROVAL_TITLE' },
 				{ data: 'CREATE_DATE' },
 				{ data: 'APPROVAL_DEADLINE' },
