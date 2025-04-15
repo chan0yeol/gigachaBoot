@@ -213,7 +213,6 @@ async function fetchJsonPost(url, jsonData) {
 
 ## 🔐 Spring Security 적용
 
-**인증/인가 흐름**
 ![image](https://github.com/user-attachments/assets/ff9f703b-6a85-49c6-9ce8-9892555a2431)
 
 ### ✅ 도입 배경
