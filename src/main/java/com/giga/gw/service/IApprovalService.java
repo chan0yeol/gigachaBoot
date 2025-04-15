@@ -26,4 +26,5 @@ public interface IApprovalService {
     List<Map<String, Object>> selectApprovalReference(String empno);
     Map<String, Object> selectApprovalLineStats (String empno);
     Map<String, Object> selectApprovalStats (String empno);
+    void deadlineRejectAuto();
 }
