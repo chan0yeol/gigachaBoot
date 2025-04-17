@@ -327,6 +327,7 @@
 		)
 		  AND APPROVAL_STATUS != 'ST05'
 			AND TEMP_SAVE_YN = 'N'
+		ORDER BY a.CREATE_DATE DESC
 	</select>
 
 	<!-- 결재 진행함 -->
@@ -425,6 +426,7 @@
 			APPROVAL_CATEGORY t3 ON t2.CATEGORY_ID = t3.CATEGORY_ID
 		WHERE
 			t1.EMPNO = #{empno}
+		ORDER BY t1.CREATE_DATE DESC
 	</select>
 
 	<!-- 참조문서함 -->

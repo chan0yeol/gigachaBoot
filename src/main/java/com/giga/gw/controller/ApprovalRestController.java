@@ -31,6 +31,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/approval")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ApprovalRestController {
     private final IApprovalDao approvalDao;
     private final IEmployeeService employeeService;
