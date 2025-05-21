@@ -38,8 +38,10 @@
 <%@ include file="./layout/newNav.jsp" %>
 <%@ include file="./layout/newSide.jsp" %>
 <main id="main" class="main">
+	<!--
 	<a href="./login.do" class="btn btn-info">로그인</a><br>
 	<a href="./logout.do" class="btn btn-danger">로그아웃</a>
+	-->
 	<div class="row">
 		<div class="col-12">
 			<div class="reservation-section card">
